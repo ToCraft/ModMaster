@@ -136,6 +136,7 @@ tasks.register<Zip>("packTheMod") {
         exclude("**/**/generated/")
         exclude("**/**/devlibs/")
         exclude("**/**/classes/")
+        exclude("**/**/publications/")
         exclude("**/**/loom-cache/")
     }
 

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
@@ -7,7 +8,19 @@ plugins {
 
 group = "dev.tocraft"
 
-java.withSourcesJar()
+java {
+    withSourcesJar()
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
 
 repositories {
     mavenCentral()
@@ -25,7 +38,7 @@ dependencies {
     api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.7-SNAPSHOT")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
-    api("dev.tocraft:preprocessor:1.0")
+    api("dev.tocraft:preprocessor:1.1")
     api("com.github.johnrengelman:shadow:8.1.1")
     api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.15")
     api("com.modrinth.minotaur:Minotaur:2.8.7")

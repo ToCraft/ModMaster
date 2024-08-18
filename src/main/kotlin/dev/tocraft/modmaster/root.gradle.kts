@@ -146,3 +146,15 @@ tasks.register<Zip>("packTheMod") {
         }
     }
 }
+
+tasks.register("release") {
+    dependsOn(tasks.getByPath("publish"))
+    dependsOn(tasks.getByPath("modrinth"))
+    dependsOn(tasks.getByPath("curseforge"))
+    dependsOn(tasks.getByPath("packTheMod"))
+    dependsOn(tasks.getByPath("extractNewestChangelog"))
+
+    if (properties["artifact_type"] == "release") {
+        dependsOn(tasks.getByPath("discordRelease"))
+    }
+}

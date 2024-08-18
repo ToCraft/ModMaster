@@ -117,7 +117,7 @@ tasks.register("extractNewestChangelog") {
 
 
 tasks.register<Zip>("packTheMod") {
-    archiveFileName.set("${rootProject.name}-${rootProject.version}.zip")
+    archiveFileName.set("${rootProject.properties["archives_base_name"]}-${rootProject.version}.zip")
     destinationDirectory.set(project.layout.buildDirectory)
 
     // Include paths
@@ -140,7 +140,7 @@ tasks.register<Zip>("packTheMod") {
         exclude("**/**/loom-cache/")
     }
 
-    subprojects.forEach {sub ->
+    subprojects.forEach { sub ->
         sub.subprojects.forEach { subsub ->
             dependsOn(subsub.tasks.getByName("build"))
         }
@@ -148,9 +148,27 @@ tasks.register<Zip>("packTheMod") {
 }
 
 tasks.register("release") {
-    dependsOn(tasks.getByPath("publish"))
-    dependsOn(tasks.getByPath("modrinth"))
-    dependsOn(tasks.getByPath("curseforge"))
+    subprojects.forEach { sub ->
+        sub.subprojects.forEach { subsub ->
+            if (!subsub.name.startsWith("testmod")) {
+                dependsOn(subsub.tasks.getByName("publish"))
+            }
+        }
+    }
+    subprojects.forEach { sub ->
+        sub.subprojects.forEach { subsub ->
+            if (!subsub.name.startsWith("testmod") && !subsub.name.contains("common")) {
+                dependsOn(subsub.tasks.getByName("modrinth"))
+            }
+        }
+    }
+    subprojects.forEach { sub ->
+        sub.subprojects.forEach { subsub ->
+            if (!subsub.name.startsWith("testmod") && !subsub.name.contains("common")) {
+                dependsOn(subsub.tasks.getByName("curseforge"))
+            }
+        }
+    }
     dependsOn(tasks.getByPath("packTheMod"))
     dependsOn(tasks.getByPath("extractNewestChangelog"))
 

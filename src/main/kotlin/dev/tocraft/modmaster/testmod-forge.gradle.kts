@@ -25,7 +25,7 @@ extensions.configure<SourceSetContainer> {
 }
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
     id("dev.tocraft.preprocessor")
     id("dev.tocraft.modmaster.general")
 }

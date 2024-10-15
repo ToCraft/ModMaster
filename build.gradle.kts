@@ -45,6 +45,15 @@ dependencies {
     api("com.diluv.schoomp:Schoomp:1.2.6")
 }
 
+gradlePlugin {
+    plugins {
+        create("settings") {
+            id = "dev.tocraft.modmaster.settings"
+            implementationClass = "dev.tocraft.modmaster.SettingsPlugin"
+        }
+    }
+}
+
 publishing {
     repositories {
         if (System.getenv("MAVEN_PASS") != null) {

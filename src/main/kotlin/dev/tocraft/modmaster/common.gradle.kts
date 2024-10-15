@@ -26,9 +26,9 @@ plugins {
 
 configurations {
     maybeCreate("dev")
-    maybeCreate("transformProductionFabric").extendsFrom(getByName("implementation"))
-    maybeCreate("transformProductionForge").extendsFrom(getByName("implementation"))
-    maybeCreate("transformProductionNeoForge").extendsFrom(getByName("implementation"))
+    maybeCreate("transformProductionFabric").extendsFrom(getByName("namedElements"))
+    maybeCreate("transformProductionForge").extendsFrom(getByName("namedElements"))
+    maybeCreate("transformProductionNeoForge").extendsFrom(getByName("namedElements"))
 }
 
 artifacts {

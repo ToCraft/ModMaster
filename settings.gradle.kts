@@ -1,1 +1,1 @@
-rootProject.name = "ModMaster"
+rootProject.name = "modmaster"

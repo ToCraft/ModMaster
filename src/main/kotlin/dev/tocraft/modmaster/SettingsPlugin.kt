@@ -3,6 +3,7 @@ package dev.tocraft.modmaster
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
+@Suppress("unused")
 class SettingsPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) {
         settings.rootProject.buildFileName = "root.gradle.kts"
@@ -24,8 +25,8 @@ class SettingsPlugin : Plugin<Settings> {
             val version = file.name.removeSuffix(".properties")
 
             // Include main version
-            settings.include(version)
-            settings.project(version).apply {
+            settings.include(":$version")
+            settings.project(":$version").apply {
                 projectDir = settings.rootDir.resolve("versions/$version")
                 buildFileName = "../../build.gradle.kts"
             }

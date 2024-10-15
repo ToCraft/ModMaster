@@ -45,9 +45,13 @@ if (commonAccessWidener.isPresent) {
     }
 }
 
-extensions.configure<ArchitectPluginExtension> {
-    platformSetupLoomIde()
-    neoForge()
+var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
+
+if (useArchPlugin != false) {
+    extensions.configure<ArchitectPluginExtension> {
+        platformSetupLoomIde()
+        neoForge()
+    }
 }
 
 configurations {

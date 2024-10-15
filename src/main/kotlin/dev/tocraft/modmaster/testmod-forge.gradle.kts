@@ -48,9 +48,13 @@ if (commonAccessWidener.isPresent) {
     }
 }
 
-extensions.configure<ArchitectPluginExtension> {
-    platformSetupLoomIde()
-    forge()
+var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
+
+if (useArchPlugin != false) {
+    extensions.configure<ArchitectPluginExtension> {
+        platformSetupLoomIde()
+        forge()
+    }
 }
 
 configurations {

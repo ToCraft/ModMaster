@@ -37,19 +37,23 @@ extensions.configure<PreprocessExtension> {
     vars["MC"] = mcId
 }
 
-extensions.configure<ArchitectPluginExtension> {
-    val props = parent!!.ext.get("props") as Properties
-    val platforms = mutableListOf<String>()
-    if (props["fabric"] != null) {
-        platforms.add("fabric")
+var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
+
+if (useArchPlugin != false) {
+    extensions.configure<ArchitectPluginExtension> {
+        val props = parent!!.ext.get("props") as Properties
+        val platforms = mutableListOf<String>()
+        if (props["fabric"] != null) {
+            platforms.add("fabric")
+        }
+        if (props["forge"] != null) {
+            platforms.add("forge")
+        }
+        if (props["neoforge"] != null) {
+            platforms.add("neoforge")
+        }
+        common(platforms)
     }
-    if (props["forge"] != null) {
-        platforms.add("forge")
-    }
-    if (props["neoforge"] != null) {
-        platforms.add("neoforge")
-    }
-    common(platforms)
 }
 
 dependencies {

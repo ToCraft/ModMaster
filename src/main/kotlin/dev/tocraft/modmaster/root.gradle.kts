@@ -3,6 +3,7 @@ package dev.tocraft.modmaster
 import com.diluv.schoomp.Webhook
 import com.diluv.schoomp.message.Message
 import com.diluv.schoomp.message.embed.Embed
+import gradle.kotlin.dsl.accessors._45d186f528438a2d5332e571a4073655.ext
 import java.io.FileWriter
 import java.io.IOException
 
@@ -20,6 +21,8 @@ allprojects {
     version = project.properties["mod_version"] as String
     group = project.properties["maven_group"] as String
 }
+
+rootProject.extensions.create("modmaster", ModMasterExtension::class)
 
 project.extra.set("releaseChangelog", releaseChangelog(1))
 

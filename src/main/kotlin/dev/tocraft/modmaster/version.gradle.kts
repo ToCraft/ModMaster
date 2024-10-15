@@ -2,11 +2,24 @@ package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
 import gradle.kotlin.dsl.accessors._193f7baa529b0c809bc69bfcf903eb61.base
+import gradle.kotlin.dsl.accessors._193f7baa529b0c809bc69bfcf903eb61.ext
 import java.util.Properties
 
-plugins {
-    id("dev.tocraft.preprocessor")
-    id("architectury-plugin")
+var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
+
+if (useArchPlugin == false) {
+    plugins {
+        id("dev.tocraft.preprocessor")
+    }
+} else {
+    plugins {
+        id("dev.tocraft.preprocessor")
+        id("architectury-plugin")
+    }
+
+    extensions.configure<ArchitectPluginExtension> {
+        minecraft = project.name
+    }
 }
 
 projectDir.mkdirs()
@@ -45,11 +58,6 @@ if (props["supported_versions"] != null) {
 project.ext.set("supported_versions", supportedVersions)
 println("└── Supported Minecraft Versions: $supportedVersions")
 println()
-
-extensions.configure<ArchitectPluginExtension> {
-    minecraft = project.name
-}
-
 layout.buildDirectory.set(rootDir.toPath().resolve("build/${project.name}").toFile())
 
 subprojects {
@@ -64,7 +72,9 @@ subprojects {
 
 allprojects {
     apply(plugin = "java")
-    apply(plugin = "architectury-plugin")
+    if (useArchPlugin != false) {
+        apply(plugin = "architectury-plugin")
+    }
 
     repositories {
         maven("https://maven.tocraft.dev/public")

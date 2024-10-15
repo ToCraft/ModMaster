@@ -1,8 +1,6 @@
 package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
-import gradle.kotlin.dsl.accessors._193f7baa529b0c809bc69bfcf903eb61.base
-import gradle.kotlin.dsl.accessors._193f7baa529b0c809bc69bfcf903eb61.ext
 import java.util.Properties
 
 var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;

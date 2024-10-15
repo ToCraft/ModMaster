@@ -70,11 +70,33 @@ configurations {
 dependencies {
     "forge"("net.minecraftforge:forge:${parent!!.name}-${(parent!!.ext["props"] as Properties)["forge"]}")
 
-    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-        isTransitive = false
+    if (useArchPlugin != false) {
+        "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+            isTransitive = false
+        }
+        "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionForge")) {
+            isTransitive = false
+        }
+    } else {
+        "compileOnly"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+            isTransitive = false
+        }
     }
-    "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionForge")) {
-        isTransitive = false
+}
+
+if (useArchPlugin == false) {
+    fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
+    sourceSets().configureEach {
+        tasks.named<JavaCompile>(compileJavaTaskName) {
+            val commonCompile = tasks.getByPath(":${parent!!.name}:common:$compileJavaTaskName") as JavaCompile
+            dependsOn(commonCompile)
+            source(commonCompile.source)
+        }
+        tasks.named<ProcessResources>(processResourcesTaskName) {
+            val commonResources = tasks.getByPath(":${parent!!.name}:common:$processResourcesTaskName") as ProcessResources
+            dependsOn(commonResources)
+            from(commonResources.source)
+        }
     }
 }
 

@@ -64,14 +64,51 @@ dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
     "modApi"("net.fabricmc.fabric-api:fabric-api:${(parent!!.ext.get("props") as Properties)["fabric"]}+${parent!!.name}")
 
-    "common"(project(":${parent!!.name}:testmod-common", configuration = "namedElements")) {
-        isTransitive = false
+    if (useArchPlugin != false) {
+        "common"(project(":${parent!!.name}:testmod-common", configuration = "namedElements")) {
+            isTransitive = false
+        }
+        "shadowCommon"(project(":${parent!!.name}:testmod-common", configuration = "transformProductionFabric")) {
+            isTransitive = false
+        }
+        "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+            isTransitive = false
+        }
+    } else {
+        "compileOnly"(project(":${parent!!.name}:testmod-common", configuration = "namedElements")) {
+            isTransitive = false
+        }
+        "compileOnly"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+            isTransitive = false
+        }
     }
-    "shadowCommon"(project(":${parent!!.name}:testmod-common", configuration = "transformProductionFabric")) {
-        isTransitive = false
+}
+
+if (useArchPlugin == false) {
+    fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
+    sourceSets().configureEach {
+        tasks.named<JavaCompile>(compileJavaTaskName) {
+            val commonCompile = tasks.getByPath(":${parent!!.name}:common:$compileJavaTaskName") as JavaCompile
+            dependsOn(commonCompile)
+            source(commonCompile.source)
+        }
+        tasks.named<ProcessResources>(processResourcesTaskName) {
+            val commonResources = tasks.getByPath(":${parent!!.name}:common:$processResourcesTaskName") as ProcessResources
+            dependsOn(commonResources)
+            from(commonResources.source)
+        }
     }
-    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-        isTransitive = false
+    sourceSets().configureEach {
+        tasks.named<JavaCompile>(compileJavaTaskName) {
+            val commonCompile = tasks.getByPath(":${parent!!.name}:testmod-common:$compileJavaTaskName") as JavaCompile
+            dependsOn(commonCompile)
+            source(commonCompile.source)
+        }
+        tasks.named<ProcessResources>(processResourcesTaskName) {
+            val commonResources = tasks.getByPath(":${parent!!.name}:testmod-common:$processResourcesTaskName") as ProcessResources
+            dependsOn(commonResources)
+            from(commonResources.source)
+        }
     }
 }
 

@@ -2,8 +2,6 @@ package dev.tocraft.modmaster
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
-import org.gradle.internal.configuration.problems.projectPathFrom
-import java.io.File
 
 @Suppress("unused")
 class SettingsPlugin : Plugin<Settings> {
@@ -29,21 +27,21 @@ class SettingsPlugin : Plugin<Settings> {
             // Include main version
             settings.include(":$version")
             settings.project(":$version").apply {
-                projectDir = settings.rootDir
-                buildFileName = "build.gradle.kts"
+                projectDir = settings.rootDir.resolve("versions/$version")
+                buildFileName = "../../build.gradle.kts"
             }
 
             // Include common project
             settings.include(":$version:common")
             settings.project(":$version:common").apply {
-                projectDir = settings.rootDir.resolve("common")
+                buildFileName = "../../../common/build.gradle.kts"
             }
 
             // Include testmod if applicable
             if (useTestmod == "true") {
                 settings.include(":$version:testmod-common")
                 settings.project(":$version:testmod-common").apply {
-                    projectDir = settings.rootDir.resolve("testmod-common")
+                    buildFileName = "../../../testmod-common/build.gradle.kts"
                 }
             }
 
@@ -51,12 +49,12 @@ class SettingsPlugin : Plugin<Settings> {
             if (foundFabric) {
                 settings.include(":$version:fabric")
                 settings.project(":$version:fabric").apply {
-                    projectDir = settings.rootDir.resolve("fabric")
+                    buildFileName = "../../../fabric/build.gradle.kts"
                 }
                 if (useTestmod == "true") {
                     settings.include(":$version:testmod-fabric")
                     settings.project(":$version:testmod-fabric").apply {
-                        projectDir = settings.rootDir.resolve("testmod-fabric")
+                        buildFileName = "../../../testmod-fabric/build.gradle.kts"
                     }
                 }
             }
@@ -64,12 +62,12 @@ class SettingsPlugin : Plugin<Settings> {
             if (foundForge) {
                 settings.include(":$version:forge")
                 settings.project(":$version:forge").apply {
-                    projectDir = settings.rootDir.resolve("forge")
+                    buildFileName = "../../../forge/build.gradle.kts"
                 }
                 if (useTestmod == "true") {
                     settings.include(":$version:testmod-forge")
                     settings.project(":$version:testmod-forge").apply {
-                        projectDir = settings.rootDir.resolve("testmod-forge")
+                        buildFileName = "../../../testmod-forge/build.gradle.kts"
                     }
                 }
             }
@@ -77,12 +75,12 @@ class SettingsPlugin : Plugin<Settings> {
             if (foundNeoForge) {
                 settings.include(":$version:neoforge")
                 settings.project(":$version:neoforge").apply {
-                    projectDir = settings.rootDir.resolve("neoforge")
+                    buildFileName = "../../../neoforge/build.gradle.kts"
                 }
                 if (useTestmod == "true") {
                     settings.include(":$version:testmod-neoforge")
                     settings.project(":$version:testmod-neoforge").apply {
-                        projectDir = settings.rootDir.resolve("testmod-neoforge")
+                        buildFileName = "../../../testmod-neoforge/build.gradle.kts"
                     }
                 }
             }

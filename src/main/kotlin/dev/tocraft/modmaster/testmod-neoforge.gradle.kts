@@ -6,6 +6,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import dev.tocraft.modmaster.ext.ModMasterExtension
+import dev.tocraft.modmaster.ext.VerMasterExtension
+import gradle.kotlin.dsl.accessors._b9e8d1a78a30acafe4d92f7f23603af5.implementation
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
 import java.util.*
@@ -50,6 +52,16 @@ if (useArchPlugin != false) {
         neoForge()
     }
 } else {
+    apply(plugin = "dev.tocraft.modmaster.sideprocessor")
+
+    dependencies {
+        implementation("dev.tocraft.crafted.annotations:side:1.0")
+    }
+
+    extensions.configure<VerMasterExtension> {
+        modLoader = "neoforge"
+    }
+
     fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
     sourceSets().configureEach {
         tasks.named<JavaCompile>(compileJavaTaskName) {

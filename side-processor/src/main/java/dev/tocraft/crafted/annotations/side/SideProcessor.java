@@ -1,4 +1,4 @@
-package modmaster.annotations;
+package dev.tocraft.crafted.annotations.side;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -21,9 +21,10 @@ import java.util.stream.Collectors;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedOptions("envType")
 public class SideProcessor extends AbstractProcessor {
-
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        System.out.println("RUNNING SIDE PROCESSOR");
+
         for (Element element : roundEnv.getElementsAnnotatedWith(Side.class)) {
             Side sideAnnotation = element.getAnnotation(Side.class);
 

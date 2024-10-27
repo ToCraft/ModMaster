@@ -1,4 +1,4 @@
-package modmaster.annotations;
+package dev.tocraft.crafted.annotations.side;
 
 public enum Env {
     CLIENT,

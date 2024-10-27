@@ -5,6 +5,7 @@ package dev.tocraft.modmaster
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import dev.tocraft.modmaster.ext.ModMasterExtension
+import dev.tocraft.modmaster.ext.VerMasterExtension
 import java.util.Properties
 
 projectDir.mkdirs()
@@ -55,13 +56,16 @@ if (useArchPlugin != false) {
         }
         common(platforms)
     }
-}
 
-dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    if (useArchPlugin != false) {
+
+    dependencies {
+        // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
+        // Do NOT use other classes from fabric loader
         modImplementation("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
+    }
+} else {
+    dependencies {
+        implementation("dev.tocraft.crafted.annotations:side:1.0")
     }
 }
 

@@ -55,6 +55,10 @@ if (useArchPlugin != false) {
         }
         common(platforms)
     }
+} else {
+    dependencies {
+        implementation("dev.tocraft.crafted.annotations:side:1.0")
+    }
 }
 
 dependencies {

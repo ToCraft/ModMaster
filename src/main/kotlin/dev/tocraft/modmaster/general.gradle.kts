@@ -50,5 +50,5 @@ rootDir.resolve("props").listFiles()?.forEach { file ->
 }
 
 extensions.configure<PreprocessExtension> {
-    remapper = remap
+    remapper.putAll(remap)
 }

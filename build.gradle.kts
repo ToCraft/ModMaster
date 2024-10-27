@@ -58,10 +58,6 @@ gradlePlugin {
             id = "dev.tocraft.modmaster.settings"
             implementationClass = "dev.tocraft.modmaster.SettingsPlugin"
         }
-        create("sideprocessor") {
-            id = "dev.tocraft.modmaster.sideprocessor"
-            implementationClass = "dev.tocraft.modmaster.SidePlugin"
-        }
     }
 }
 

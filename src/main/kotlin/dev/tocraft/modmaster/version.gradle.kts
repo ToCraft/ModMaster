@@ -2,7 +2,6 @@ package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.modmaster.ext.ModMasterExtension
-import dev.tocraft.modmaster.ext.VerMasterExtension
 import java.util.*
 
 var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin

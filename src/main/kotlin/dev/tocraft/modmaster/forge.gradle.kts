@@ -7,7 +7,6 @@ import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import dev.tocraft.modmaster.ext.ModMasterExtension
-import dev.tocraft.modmaster.ext.VerMasterExtension
 import gradle.kotlin.dsl.accessors._b9e8d1a78a30acafe4d92f7f23603af5.implementation
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
@@ -67,8 +66,11 @@ if (useArchPlugin != false) {
         implementation("dev.tocraft.crafted.annotations:side:1.0")
     }
 
-    extensions.configure<VerMasterExtension> {
-        modLoader = "forge"
+    extensions.configure<PreprocessExtension> {
+        remapper["dev.tocraft.crafted.annotations.side.Side"] = "net.minecraftforge.api.distmarker.OnlyIn"
+        remapper["dev.tocraft.crafted.annotations.side.Env"] = "net.minecraftforge.api.distmarker.Dist"
+        remapper["@Side(Env.CLIENT)"] = "@Environment(EnvType.CLIENT)"
+        remapper["@Side(Env.DEDICATED_SERVER)"] = "@Environment(EnvType.SERVER)"
     }
 
     fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")

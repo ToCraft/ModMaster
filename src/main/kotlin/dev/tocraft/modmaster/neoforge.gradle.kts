@@ -6,8 +6,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
+import dev.tocraft.gradle.preprocess.tasks.PreProcessTask
 import dev.tocraft.modmaster.ext.ModMasterExtension
-import gradle.kotlin.dsl.accessors._b9e8d1a78a30acafe4d92f7f23603af5.implementation
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -64,21 +64,20 @@ if (useArchPlugin != false) {
     extensions.configure<PreprocessExtension> {
         remapper["dev.tocraft.crafted.annotations.side.Side"] = "net.minecraftforge.api.distmarker.OnlyIn"
         remapper["dev.tocraft.crafted.annotations.side.Env"] = "net.minecraftforge.api.distmarker.Dist"
-        remapper["@Side(Env.CLIENT)"] = "@Environment(EnvType.CLIENT)"
-        remapper["@Side(Env.DEDICATED_SERVER)"] = "@Environment(EnvType.SERVER)"
+        remapper["@Side(Env.CLIENT)"] = "@OnlyIn(Dist.CLIENT)"
+        remapper["@Side(Env.DEDICATED_SERVER)"] = "@OnlyIn(Dist.DEDICATED_SERVER)"
     }
 
     fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
     sourceSets().configureEach {
-        tasks.named<JavaCompile>(compileJavaTaskName) {
-            val commonCompile = tasks.getByPath(":${parent!!.name}:common:$compileJavaTaskName") as JavaCompile
-            dependsOn(commonCompile)
-            source(commonCompile.source)
+        tasks.named<PreProcessTask>(getTaskName("preprocess", "Java")) {
+            val commonJava = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Java")}") as PreProcessTask
+            sources.addAll(commonJava.sources)
         }
-        tasks.named<ProcessResources>(processResourcesTaskName) {
-            val commonResources = tasks.getByPath(":${parent!!.name}:common:$processResourcesTaskName") as ProcessResources
-            dependsOn(commonResources)
-            from(commonResources.source)
+
+        tasks.named<PreProcessTask>(getTaskName("preprocess", "Resources")) {
+            val commonResources = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Resources")}") as PreProcessTask
+            sources.addAll(commonResources.sources)
         }
     }
 }

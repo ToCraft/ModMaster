@@ -3,7 +3,6 @@
 package dev.tocraft.modmaster
 
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
-import gradle.kotlin.dsl.accessors._b9e8d1a78a30acafe4d92f7f23603af5.ext
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import java.util.*
 import kotlin.collections.HashMap

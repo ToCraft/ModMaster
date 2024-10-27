@@ -64,30 +64,6 @@ if (useArchPlugin != false) {
         remapper["@Side(Env.CLIENT)"] = "@Environment(EnvType.CLIENT)"
         remapper["@Side(Env.DEDICATED_SERVER)"] = "@Environment(EnvType.SERVER)"
     }
-
-    fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
-    sourceSets().configureEach {
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Java")) {
-            val commonJava = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Java")}") as PreProcessTask
-            sources.addAll(commonJava.sources)
-        }
-
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Resources")) {
-            val commonResources = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Resources")}") as PreProcessTask
-            sources.addAll(commonResources.sources)
-        }
-    }
-    sourceSets().configureEach {
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Java")) {
-            val commonJava = tasks.getByPath(":${parent!!.name}:testmod-common:${getTaskName("preprocess", "Java")}") as PreProcessTask
-            sources.addAll(commonJava.sources)
-        }
-
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Resources")) {
-            val commonResources = tasks.getByPath(":${parent!!.name}:testmod-common:${getTaskName("preprocess", "Resources")}") as PreProcessTask
-            sources.addAll(commonResources.sources)
-        }
-    }
 }
 
 configurations {

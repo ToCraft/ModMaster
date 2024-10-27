@@ -72,19 +72,6 @@ if (useArchPlugin != false) {
         remapper["@Side(Env.CLIENT)"] = "@OnlyIn(Dist.CLIENT)"
         remapper["@Side(Env.DEDICATED_SERVER)"] = "@OnlyIn(Dist.DEDICATED_SERVER)"
     }
-
-    fun Project.sourceSets() = extensions.getByType(SourceSetContainer::class)
-    sourceSets().configureEach {
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Java")) {
-            val commonJava = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Java")}") as PreProcessTask
-            sources.addAll(commonJava.sources)
-        }
-
-        tasks.named<PreProcessTask>(getTaskName("preprocess", "Resources")) {
-            val commonResources = tasks.getByPath(":${parent!!.name}:common:${getTaskName("preprocess", "Resources")}") as PreProcessTask
-            sources.addAll(commonResources.sources)
-        }
-    }
 }
 
 configurations {

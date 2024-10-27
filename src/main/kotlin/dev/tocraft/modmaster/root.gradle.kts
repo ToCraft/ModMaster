@@ -3,7 +3,7 @@ package dev.tocraft.modmaster
 import com.diluv.schoomp.Webhook
 import com.diluv.schoomp.message.Message
 import com.diluv.schoomp.message.embed.Embed
-import gradle.kotlin.dsl.accessors._45d186f528438a2d5332e571a4073655.ext
+import dev.tocraft.modmaster.ext.ModMasterExtension
 import java.io.FileWriter
 import java.io.IOException
 
@@ -57,7 +57,7 @@ fun discordChangelog(): List<String> {
     }
     var temp = ""
     changelog.split("\n").forEach {
-        var it2 = it + "\n"
+        val it2 = it + "\n"
         if ((temp.length + it2.length) >= 1024) {
             res.add(temp)
             temp = it2

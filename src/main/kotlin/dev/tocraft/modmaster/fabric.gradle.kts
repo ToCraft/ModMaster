@@ -5,7 +5,9 @@ package dev.tocraft.modmaster
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.gradle.preprocess.PreprocessExtension
+import dev.tocraft.gradle.preprocess.data.PreprocessExtension
+import dev.tocraft.modmaster.ext.ModMasterExtension
+import dev.tocraft.modmaster.ext.VerMasterExtension
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -16,10 +18,10 @@ projectDir.mkdirs()
 extensions.configure<SourceSetContainer> {
     named("main") {
         java {
-            setSrcDirs(listOf(rootDir.resolve("fabric/src/main/java")))
+            srcDir(rootDir.resolve("fabric/src/main/java"))
         }
         resources {
-            setSrcDirs(listOf(rootDir.resolve("fabric/src/main/resources")))
+            srcDir(rootDir.resolve("fabric/src/main/resources"))
         }
     }
 }
@@ -52,6 +54,23 @@ if (useArchPlugin != false) {
         platformSetupLoomIde()
         fabric()
     }
+} else {
+    apply(plugin = "dev.tocraft.modmaster.sideprocessor")
+    extensions.create("vermaster", VerMasterExtension::class).modLoader = name
+
+    fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
+    sourceSets().configureEach {
+        tasks.named<JavaCompile>(compileJavaTaskName) {
+            val commonCompile = tasks.getByPath(":${parent!!.name}:common:$compileJavaTaskName") as JavaCompile
+            dependsOn(commonCompile)
+            source(commonCompile.source)
+        }
+        tasks.named<ProcessResources>(processResourcesTaskName) {
+            val commonResources = tasks.getByPath(":${parent!!.name}:common:$processResourcesTaskName") as ProcessResources
+            dependsOn(commonResources)
+            from(commonResources.source)
+        }
+    }
 }
 
 configurations {
@@ -76,22 +95,6 @@ dependencies {
     } else {
         "compileOnly"(project(":${parent!!.name}:common", configuration = "namedElements")) {
             isTransitive = false
-        }
-    }
-}
-
-if (useArchPlugin == false) {
-    fun Project.sourceSets() = extensions.getByName<SourceSetContainer>("sourceSets")
-    sourceSets().configureEach {
-        tasks.named<JavaCompile>(compileJavaTaskName) {
-            val commonCompile = tasks.getByPath(":${parent!!.name}:common:$compileJavaTaskName") as JavaCompile
-            dependsOn(commonCompile)
-            source(commonCompile.source)
-        }
-        tasks.named<ProcessResources>(processResourcesTaskName) {
-            val commonResources = tasks.getByPath(":${parent!!.name}:common:$processResourcesTaskName") as ProcessResources
-            dependsOn(commonResources)
-            from(commonResources.source)
         }
     }
 }

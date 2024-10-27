@@ -3,7 +3,8 @@
 package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.gradle.preprocess.PreprocessExtension
+import dev.tocraft.gradle.preprocess.data.PreprocessExtension
+import dev.tocraft.modmaster.ext.ModMasterExtension
 import java.util.Properties
 
 projectDir.mkdirs()

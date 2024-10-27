@@ -3,7 +3,8 @@
 package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.gradle.preprocess.PreprocessExtension
+import dev.tocraft.gradle.preprocess.data.PreprocessExtension
+import dev.tocraft.modmaster.ext.ModMasterExtension
 import java.util.Properties
 
 projectDir.mkdirs()
@@ -11,10 +12,10 @@ projectDir.mkdirs()
 extensions.configure<SourceSetContainer> {
     named("main") {
         java {
-            setSrcDirs(listOf(rootDir.resolve("common/src/main/java")))
+            srcDir(rootDir.resolve("common/src/main/java"))
         }
         resources {
-            setSrcDirs(listOf(rootDir.resolve("common/src/main/resources")))
+            srcDir(rootDir.resolve("common/src/main/resources"))
         }
     }
 }

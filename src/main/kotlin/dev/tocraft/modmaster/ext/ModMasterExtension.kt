@@ -1,6 +1,5 @@
-package dev.tocraft.modmaster
+package dev.tocraft.modmaster.ext
 
 open class ModMasterExtension {
     var useArchPlugin: Boolean = true
-    var modLoader: String = ""
 }

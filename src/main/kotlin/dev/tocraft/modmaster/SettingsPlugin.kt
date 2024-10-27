@@ -13,7 +13,7 @@ class SettingsPlugin : Plugin<Settings> {
 
         settings.rootDir.resolve("props").listFiles()?.forEach { file ->
             // Check if the file's name matches the forced version
-            if (forcedVersion.isNotBlank() && !file.name.startsWith(forcedVersion)) {
+            if (forcedVersion.isNotBlank() && !file.name.equals("$forcedVersion.properties")) {
                 return@forEach
             }
 

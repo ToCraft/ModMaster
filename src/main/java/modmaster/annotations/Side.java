@@ -1,4 +1,4 @@
-package dev.tocraft.modmaster.annotations;
+package modmaster.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

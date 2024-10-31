@@ -46,8 +46,6 @@ dependencies {
     api("com.modrinth.minotaur:Minotaur:2.8.7")
     api("com.diluv.schoomp:Schoomp:1.2.6")
 
-    implementation(project(":side-processor"))
-
     annotationProcessor("com.google.auto.service:auto-service:1.1.1")
     compileOnly("com.google.auto.service:auto-service:1.1.1")
 }

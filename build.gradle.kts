@@ -40,7 +40,7 @@ dependencies {
     api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.7-SNAPSHOT")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
-    api("dev.tocraft:preprocessor:1.2")
+    api("dev.tocraft:preprocessor:1.4")
     api("com.gradleup.shadow:shadow-gradle-plugin:8.3.3")
     api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.15")
     api("com.modrinth.minotaur:Minotaur:2.8.7")

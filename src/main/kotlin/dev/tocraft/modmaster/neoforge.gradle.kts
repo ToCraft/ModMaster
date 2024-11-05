@@ -119,54 +119,60 @@ components.named<AdhocComponentWithVariants>("java") {
     }
 }
 
-extensions.configure<ModrinthExtension> {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = parent!!.properties["modrinth_id"] as String
-    versionNumber = "${parent!!.name}-${project.name}-${project.version}"
-    versionType = "${parent!!.properties["artifact_type"]}"
-    uploadFile = tasks.getByName("remapJar")
-    gameVersions = listOf()
-    loaders = listOf("neoforge")
-    changelog.set(rootProject.ext.get("releaseChangelog") as String)
-    dependencies {
+val modrinthId = parent!!.properties["modrinth-id"]
+if (modrinthId != null) {
+    extensions.configure<ModrinthExtension> {
+        token = System.getenv("MODRINTH_TOKEN")
+        projectId = modrinthId as String
+        versionNumber = "${parent!!.name}-${project.name}-${project.version}"
+        versionType = "${parent!!.properties["artifact_type"]}"
+        uploadFile = tasks.getByName("remapJar")
+        gameVersions = listOf()
+        loaders = listOf("neoforge")
+        changelog.set(rootProject.ext.get("releaseChangelog") as String)
+        dependencies {
+            if (project.hasProperty("required_dependencies") && (project.properties["required_dependencies"] as String).isNotBlank()) {
+                (project.properties["required_dependencies"] as String).split(',').forEach {
+                    required.project(it)
+                }
+            }
+            if (project.hasProperty("optional_dependencies") && (project.properties["optional_dependencies"] as String).isNotBlank()) {
+                (project.properties["optional_dependencies"] as String).split(',').forEach {
+                    optional.project(it)
+                }
+            }
+        }
+
+        (parent!!.properties["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
+    }
+}
+
+val cfId = parent!!.properties["curseforge_id"]
+if (cfId != null) {
+    tasks.create<TaskPublishCurseForge>("curseforge") {
+        apiToken = System.getenv("CURSEFORGE_TOKEN")
+
+        // The main file to upload
+        val mainFile = upload("$cfId", tasks.getByName("remapJar"))
+        mainFile.displayName = "${parent!!.name}-${project.name}-${project.version}"
+        mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
+        mainFile.changelog = rootProject.ext.get("releaseChangelog")
+        mainFile.changelogType = "markdown"
+        mainFile.addModLoader("neoforge")
+        mainFile.addJavaVersion("Java ${(parent!!.ext.get("props") as Properties)["java"]}")
         if (project.hasProperty("required_dependencies") && (project.properties["required_dependencies"] as String).isNotBlank()) {
             (project.properties["required_dependencies"] as String).split(',').forEach {
-                required.project(it)
+                mainFile.addRequirement(it)
             }
         }
         if (project.hasProperty("optional_dependencies") && (project.properties["optional_dependencies"] as String).isNotBlank()) {
             (project.properties["optional_dependencies"] as String).split(',').forEach {
-                optional.project(it)
+                mainFile.addOptional(it)
             }
         }
+
+        (parent!!.properties["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
     }
-
-    (parent!!.properties["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
-}
-
-tasks.create<TaskPublishCurseForge>("curseforge") {
-    apiToken = System.getenv("CURSEFORGE_TOKEN")
-
-    // The main file to upload
-    val mainFile = upload("${parent!!.properties["curseforge_id"]}", tasks.getByName("remapJar"))
-    mainFile.displayName = "${parent!!.name}-${project.name}-${project.version}"
-    mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
-    mainFile.changelog = rootProject.ext.get("releaseChangelog")
-    mainFile.changelogType = "markdown"
-    mainFile.addModLoader("neoforge")
-    mainFile.addJavaVersion("Java ${(parent!!.ext.get("props") as Properties)["java"]}")
-    if (project.hasProperty("required_dependencies") && (project.properties["required_dependencies"] as String).isNotBlank()) {
-        (project.properties["required_dependencies"] as String).split(',').forEach {
-            mainFile.addRequirement(it)
-        }
-    }
-    if (project.hasProperty("optional_dependencies") && (project.properties["optional_dependencies"] as String).isNotBlank()) {
-        (project.properties["optional_dependencies"] as String).split(',').forEach {
-            mainFile.addOptional(it)
-        }
-    }
-
-    (parent!!.properties["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
 }
 
 extensions.configure<PublishingExtension> {

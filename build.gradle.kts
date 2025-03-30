@@ -37,12 +37,12 @@ dependencies {
     implementation(gradleApi())
     implementation(localGroovy())
 
-    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.7-SNAPSHOT")
+    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.10-SNAPSHOT")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
     api("dev.tocraft:preprocessor:1.4")
-    api("com.gradleup.shadow:shadow-gradle-plugin:8.3.3")
-    api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.15")
+    api("com.gradleup.shadow:shadow-gradle-plugin:8.3.6")
+    api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.26")
     api("com.modrinth.minotaur:Minotaur:2.8.7")
     api("com.diluv.schoomp:Schoomp:1.2.6")
 

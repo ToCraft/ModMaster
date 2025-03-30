@@ -3,17 +3,11 @@ package dev.tocraft.modmaster
 import com.diluv.schoomp.Webhook
 import com.diluv.schoomp.message.Message
 import com.diluv.schoomp.message.embed.Embed
-import dev.tocraft.modmaster.ext.ModMasterExtension
 import java.io.FileWriter
 import java.io.IOException
 
 allprojects {
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
         maven("https://maven.parchmentmc.org")
         maven("https://maven.neoforged.net/releases/")
     }
@@ -22,11 +16,9 @@ allprojects {
     group = project.properties["maven_group"] as String
 }
 
-rootProject.extensions.create("modmaster", ModMasterExtension::class)
-
 project.extra.set("releaseChangelog", releaseChangelog(1))
 
-fun releaseChangelog(versions : Int): String {
+fun releaseChangelog(versions: Int): String {
     try {
         var changelog = ""
         var match = 0
@@ -42,7 +34,7 @@ fun releaseChangelog(versions : Int): String {
             return@forEachLine
         }
         return changelog + "\n\n"
-    } catch (exception : Exception) {
+    } catch (exception: Exception) {
         return "${rootProject.properties["archives_base_name"]} ${rootProject.properties["mod_version"]}\n==========\nThere was an error generating the changelog" + exception.localizedMessage
     }
 }
@@ -96,9 +88,7 @@ tasks.register("discordRelease") {
             message.addEmbed(embed)
 
             webhook.sendMessage(message)
-        }
-
-        catch (ignored : IOException) {
+        } catch (ignored: IOException) {
             println("Failed to push to the Discord webhook.")
         }
         println("Send Changelog to Discord.")
@@ -106,13 +96,13 @@ tasks.register("discordRelease") {
 }
 
 tasks.register("extractNewestChangelog") {
-    val fileName = "extracted.CHANGELOG.md";
+    val fileName = "extracted.CHANGELOG.md"
     // delete file if exists
     delete(fileName)
     doLast {
         // write changelog
-        val fw = FileWriter(fileName);
-        fw.write(releaseChangelog(1));
+        val fw = FileWriter(fileName)
+        fw.write(releaseChangelog(1))
         fw.close()
         println("Extracted newest Changelog to \"extracted.CHANGELOG.md\"")
     }

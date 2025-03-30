@@ -6,8 +6,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
-import dev.tocraft.gradle.preprocess.tasks.PreProcessTask
-import dev.tocraft.modmaster.ext.ModMasterExtension
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -47,26 +45,9 @@ if (commonAccessWidener.isPresent) {
     }
 }
 
-var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
-
-if (useArchPlugin != false) {
-    extensions.configure<ArchitectPluginExtension> {
-        platformSetupLoomIde()
-        neoForge()
-    }
-} else {
-    apply(plugin = "dev.tocraft.modmaster.sideprocessor")
-
-    dependencies {
-        implementation("dev.tocraft.crafted.annotations:side:1.0")
-    }
-
-    extensions.configure<PreprocessExtension> {
-        remapper["dev.tocraft.crafted.annotations.side.Side"] = "net.minecraftforge.api.distmarker.OnlyIn"
-        remapper["dev.tocraft.crafted.annotations.side.Env"] = "net.minecraftforge.api.distmarker.Dist"
-        remapper["@Side(Env.CLIENT)"] = "@OnlyIn(Dist.CLIENT)"
-        remapper["@Side(Env.DEDICATED_SERVER)"] = "@OnlyIn(Dist.DEDICATED_SERVER)"
-    }
+extensions.configure<ArchitectPluginExtension> {
+    platformSetupLoomIde()
+    neoForge()
 }
 
 configurations {
@@ -80,17 +61,11 @@ configurations {
 dependencies {
     "neoForge"("net.neoforged:neoforge:${(parent!!.ext["props"] as Properties)["neoforge"]}")
 
-    if (useArchPlugin != false) {
-        "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-            isTransitive = false
-        }
-        "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionNeoForge")) {
-            isTransitive = false
-        }
-    } else {
-        "compileOnly"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-            isTransitive = false
-        }
+    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+        isTransitive = false
+    }
+    "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionNeoForge")) {
+        isTransitive = false
     }
 }
 

@@ -5,7 +5,6 @@ package dev.tocraft.modmaster
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import java.util.*
-import kotlin.collections.HashMap
 
 plugins {
     id("dev.architectury.loom")

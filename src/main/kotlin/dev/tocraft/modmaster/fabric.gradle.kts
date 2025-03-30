@@ -6,8 +6,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
 import dev.tocraft.gradle.preprocess.data.PreprocessExtension
-import dev.tocraft.gradle.preprocess.tasks.PreProcessTask
-import dev.tocraft.modmaster.ext.ModMasterExtension
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -47,26 +45,9 @@ if (commonAccessWidener.isPresent) {
     }
 }
 
-var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin;
-
-if (useArchPlugin != false) {
-    extensions.configure<ArchitectPluginExtension> {
-        platformSetupLoomIde()
-        fabric()
-    }
-} else {
-    apply(plugin = "dev.tocraft.modmaster.sideprocessor")
-
-    dependencies {
-        implementation("dev.tocraft.crafted.annotations:side:1.0")
-    }
-
-    extensions.configure<PreprocessExtension> {
-        remapper["dev.tocraft.crafted.annotations.side.Side"] = "net.fabricmc.api.Environment"
-        remapper["dev.tocraft.crafted.annotations.side.Env"] = "net.fabricmc.api.EnvType"
-        remapper["@Side(Env.CLIENT)"] = "@Environment(EnvType.CLIENT)"
-        remapper["@Side(Env.DEDICATED_SERVER)"] = "@Environment(EnvType.SERVER)"
-    }
+extensions.configure<ArchitectPluginExtension> {
+    platformSetupLoomIde()
+    fabric()
 }
 
 configurations {
@@ -81,17 +62,11 @@ dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
     "modApi"("net.fabricmc.fabric-api:fabric-api:${(parent!!.ext.get("props") as Properties)["fabric"]}+${parent!!.name}")
 
-    if (useArchPlugin != false) {
-        "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-            isTransitive = false
-        }
-        "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionFabric")) {
-            isTransitive = false
-        }
-    } else {
-        "compileOnly"(project(":${parent!!.name}:common", configuration = "namedElements")) {
-            isTransitive = false
-        }
+    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+        isTransitive = false
+    }
+    "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionFabric")) {
+        isTransitive = false
     }
 }
 

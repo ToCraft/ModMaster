@@ -1,24 +1,15 @@
 package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.modmaster.ext.ModMasterExtension
 import java.util.*
 
-var useArchPlugin = rootProject.extensions.findByType(ModMasterExtension::class)?.useArchPlugin
+plugins {
+    id("dev.tocraft.preprocessor")
+    id("architectury-plugin")
+}
 
-if (useArchPlugin == false) {
-    plugins {
-        id("dev.tocraft.preprocessor")
-    }
-} else {
-    plugins {
-        id("dev.tocraft.preprocessor")
-        id("architectury-plugin")
-    }
-
-    extensions.configure<ArchitectPluginExtension> {
-        minecraft = project.name
-    }
+extensions.configure<ArchitectPluginExtension> {
+    minecraft = project.name
 }
 
 projectDir.mkdirs()
@@ -71,9 +62,7 @@ subprojects {
 
 allprojects {
     apply(plugin = "java")
-    if (useArchPlugin != false) {
-        apply(plugin = "architectury-plugin")
-    }
+    apply(plugin = "architectury-plugin")
 
     repositories {
         maven("https://maven.tocraft.dev/public")

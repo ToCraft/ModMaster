@@ -132,7 +132,7 @@ if (modrinthId != null) {
 
 val cfId = parent!!.properties["curseforge_id"]
 if (cfId != null) {
-    tasks.create<TaskPublishCurseForge>("curseforge") {
+    tasks.register<TaskPublishCurseForge>("curseforge") {
         apiToken = System.getenv("CURSEFORGE_TOKEN")
 
         // The main file to upload

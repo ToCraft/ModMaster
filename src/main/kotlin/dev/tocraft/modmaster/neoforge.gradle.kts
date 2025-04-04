@@ -94,7 +94,7 @@ components.named<AdhocComponentWithVariants>("java") {
     }
 }
 
-val modrinthId = parent!!.properties["modrinth-id"]
+val modrinthId = parent!!.properties["modrinth_id"]
 if (modrinthId != null) {
     extensions.configure<ModrinthExtension> {
         token = System.getenv("MODRINTH_TOKEN")

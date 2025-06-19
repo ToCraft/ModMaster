@@ -17,32 +17,8 @@ dependencies {
     minecraft("com.mojang:minecraft:${parent!!.properties["minecraft"]}")
     mappings(loom.layered {
         officialMojangMappings()
-        if ((parent!!.ext.get("props") as Properties)["mappings"] != null) {
-            parchment("org.parchmentmc.data:parchment-${parent!!.properties["minecraft"]}:" + (parent!!.ext.get("props") as Properties)["mappings"] + "@zip")
+        if (parent!!.properties["mappings"] != null) {
+            parchment("org.parchmentmc.data:parchment-${parent!!.properties["minecraft"]}:" + parent!!.properties["mappings"] + "@zip")
         }
     })
-}
-
-val mcId =
-    Integer.parseInt(((parent!!.ext["props"] as Properties)["mc_id"] ?: project.name.replace(".", "")).toString())
-
-val remap = HashMap<String, String>()
-rootDir.resolve("props").listFiles()?.forEach { file ->
-    if (file.name.endsWith(".remap")) {
-        val ver = Integer.parseInt(file.name.replace(".remap", ""))
-        val lines = file.readLines()
-
-        val verReMap = HashMap<String, String>()
-
-        lines.forEach { line ->
-            val arg = line.split(" -> ")
-            if (ver > mcId) {
-                verReMap[arg[1]] = arg[0]
-            } else {
-                verReMap[arg[0]] = arg[1]
-            }
-        }
-
-        remap.putAll(verReMap)
-    }
 }

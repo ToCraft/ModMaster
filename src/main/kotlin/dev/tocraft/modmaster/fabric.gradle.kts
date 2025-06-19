@@ -154,7 +154,7 @@ extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenFabric") {
             artifactId = "${rootProject.properties["archives_base_name"]}-${project.name}"
-            version = parent!!.properties["minecraft"] + "-" + rootProject.properties["mod_version"]
+            version = (parent!!.properties["minecraft"] as String) + "-" + rootProject.properties["mod_version"]
             from(components["java"])
         }
     }

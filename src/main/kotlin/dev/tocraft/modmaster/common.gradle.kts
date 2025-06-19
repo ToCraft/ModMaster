@@ -3,8 +3,6 @@
 package dev.tocraft.modmaster
 
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.gradle.preprocess.data.PreprocessExtension
-import java.util.*
 
 projectDir.mkdirs()
 
@@ -20,7 +18,6 @@ extensions.configure<SourceSetContainer> {
 }
 
 plugins {
-    id("dev.tocraft.preprocessor")
     id("dev.tocraft.modmaster.general")
 }
 
@@ -32,21 +29,15 @@ artifacts {
     add("dev", tasks["jar"])
 }
 
-extensions.configure<PreprocessExtension> {
-    val mcId = (parent!!.ext["props"] as Properties)["mc_id"] ?: project.name.replace(".", "")
-    vars["MC"] = mcId
-}
-
 extensions.configure<ArchitectPluginExtension> {
-    val props = parent!!.ext.get("props") as Properties
     val platforms = mutableListOf<String>()
-    if (props["fabric"] != null) {
+    if (parent!!.properties["fabric"] != null) {
         platforms.add("fabric")
     }
-    if (props["forge"] != null) {
+    if (parent!!.properties["forge"] != null) {
         platforms.add("forge")
     }
-    if (props["neoforge"] != null) {
+    if (parent!!.properties["neoforge"] != null) {
         platforms.add("neoforge")
     }
     common(platforms)

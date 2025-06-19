@@ -14,6 +14,29 @@ allprojects {
 
     version = project.properties["mod_version"] as String
     group = project.properties["maven_group"] as String
+
+    allprojects {
+        apply(plugin = "java")
+        apply(plugin = "architectury-plugin")
+
+        repositories {
+            maven("https://maven.tocraft.dev/public")
+        }
+
+        extensions.configure<BasePluginExtension> {
+            archivesName = rootProject.properties["archives_base_name"] as String
+        }
+
+        tasks.withType<JavaCompile>().configureEach {
+            options.encoding = "UTF-8"
+            options.release.set(Integer.parseInt(properties["java"] as String))
+        }
+
+        extensions.configure<JavaPluginExtension> {
+            withSourcesJar()
+        }
+    }
+
 }
 
 project.extra.set("releaseChangelog", releaseChangelog(1))

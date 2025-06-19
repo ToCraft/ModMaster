@@ -5,7 +5,6 @@ package dev.tocraft.modmaster
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
 import dev.architectury.plugin.ArchitectPluginExtension
-import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.RemapJarTask
@@ -26,18 +25,13 @@ extensions.configure<SourceSetContainer> {
 
 plugins {
     id("com.gradleup.shadow")
-    id("dev.tocraft.preprocessor")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
 }
 
-extensions.configure<PreprocessExtension> {
-    val mcId = (parent!!.ext["props"] as Properties)["mc_id"] ?: project.name.replace(".", "")
-    vars["MC"] = mcId
-}
-
-val commonAccessWidener: RegularFileProperty = project(":${parent!!.name}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+val commonAccessWidener: RegularFileProperty =
+    project(":${parent!!.name}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -59,7 +53,7 @@ configurations {
 }
 
 dependencies {
-    "neoForge"("net.neoforged:neoforge:${(parent!!.ext["props"] as Properties)["neoforge"]}")
+    "neoForge"("net.neoforged:neoforge:${parent!!.properties["neoforge"]}")
 
     "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
         isTransitive = false
@@ -134,7 +128,7 @@ if (cfId != null) {
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
         mainFile.addModLoader("neoforge")
-        mainFile.addJavaVersion("Java ${(parent!!.ext.get("props") as Properties)["java"]}")
+        mainFile.addJavaVersion("Java ${parent!!.properties["java"]}")
         if (project.hasProperty("required_dependencies") && (project.properties["required_dependencies"] as String).isNotBlank()) {
             (project.properties["required_dependencies"] as String).split(',').forEach {
                 mainFile.addRequirement(it)

@@ -2,7 +2,6 @@
 
 package dev.tocraft.modmaster
 
-import dev.tocraft.gradle.preprocess.data.PreprocessExtension
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import java.util.*
 
@@ -24,7 +23,8 @@ dependencies {
     })
 }
 
-val mcId = Integer.parseInt(((parent!!.ext["props"] as Properties)["mc_id"] ?: project.name.replace(".", "")).toString())
+val mcId =
+    Integer.parseInt(((parent!!.ext["props"] as Properties)["mc_id"] ?: project.name.replace(".", "")).toString())
 
 val remap = HashMap<String, String>()
 rootDir.resolve("props").listFiles()?.forEach { file ->
@@ -45,8 +45,4 @@ rootDir.resolve("props").listFiles()?.forEach { file ->
 
         remap.putAll(verReMap)
     }
-}
-
-extensions.configure<PreprocessExtension> {
-    remapper.putAll(remap)
 }

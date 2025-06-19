@@ -24,6 +24,7 @@ extensions.configure<SourceSetContainer> {
 }
 
 plugins {
+    id("maven-publish")
     id("com.gradleup.shadow")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")

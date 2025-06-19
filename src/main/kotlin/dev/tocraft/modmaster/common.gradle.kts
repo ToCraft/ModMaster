@@ -19,6 +19,7 @@ extensions.configure<SourceSetContainer> {
 
 plugins {
     id("dev.tocraft.modmaster.general")
+    id("maven-publish")
 }
 
 configurations {

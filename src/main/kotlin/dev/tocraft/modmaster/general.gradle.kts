@@ -14,11 +14,11 @@ extensions.configure<LoomGradleExtensionAPI> {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${parent!!.name}")
+    minecraft("com.mojang:minecraft:${parent!!.properties["minecraft"]}")
     mappings(loom.layered {
         officialMojangMappings()
         if ((parent!!.ext.get("props") as Properties)["mappings"] != null) {
-            parchment("org.parchmentmc.data:parchment-${parent!!.name}:" + (parent!!.ext.get("props") as Properties)["mappings"] + "@zip")
+            parchment("org.parchmentmc.data:parchment-${parent!!.properties["minecraft"]}:" + (parent!!.ext.get("props") as Properties)["mappings"] + "@zip")
         }
     })
 }

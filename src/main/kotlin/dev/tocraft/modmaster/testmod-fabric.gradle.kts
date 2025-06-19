@@ -27,7 +27,7 @@ plugins {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.name}:testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":${parent!!.properties["minecraft"]}:testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -50,15 +50,15 @@ configurations {
 
 dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
-    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.name}")
+    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
 
-    "common"(project(":${parent!!.name}:testmod-common", configuration = "namedElements")) {
+    "common"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.name}:testmod-common", configuration = "transformProductionFabric")) {
+    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
-    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+    "common"(project(":${parent!!.properties["minecraft"]}:common", configuration = "namedElements")) {
         isTransitive = false
     }
 }
@@ -77,7 +77,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.name}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":${parent!!.properties["minecraft"]}:common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }

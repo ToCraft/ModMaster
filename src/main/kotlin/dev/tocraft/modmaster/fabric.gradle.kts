@@ -31,7 +31,7 @@ plugins {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.name}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":${parent!!.properties["minecraft"]}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -54,12 +54,12 @@ configurations {
 
 dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
-    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.name}")
+    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
 
-    "common"(project(":${parent!!.name}:common", configuration = "namedElements")) {
+    "common"(project(":${parent!!.properties["minecraft"]}:common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.name}:common", configuration = "transformProductionFabric")) {
+    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
 }
@@ -80,7 +80,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.name}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":${parent!!.properties["minecraft"]}:common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }
@@ -96,7 +96,7 @@ if (modrinthId != null) {
     extensions.configure<ModrinthExtension> {
         token = System.getenv("MODRINTH_TOKEN")
         projectId = modrinthId as String
-        versionNumber = "${parent!!.name}-${project.name}-${project.version}"
+        versionNumber = "${parent!!.properties["minecraft"]}-${project.name}-${project.version}"
         versionType = "${parent!!.properties["artifact_type"]}"
         uploadFile = tasks.getByName("remapJar")
         gameVersions = listOf()
@@ -127,7 +127,7 @@ if (cfId != null) {
 
         // The main file to upload
         val mainFile = upload("$cfId", tasks.getByName("remapJar"))
-        mainFile.displayName = "${parent!!.name}-${project.name}-${project.version}"
+        mainFile.displayName = "${parent!!.properties["minecraft"]}-${project.name}-${project.version}"
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
@@ -154,7 +154,7 @@ extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenFabric") {
             artifactId = "${rootProject.properties["archives_base_name"]}-${project.name}"
-            version = parent!!.name + "-" + rootProject.properties["mod_version"]
+            version = parent!!.properties["minecraft"] + "-" + rootProject.properties["mod_version"]
             from(components["java"])
         }
     }

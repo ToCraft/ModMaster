@@ -32,7 +32,7 @@ plugins {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.properties["minecraft"]}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -57,10 +57,10 @@ dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
     "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
 
-    "common"(project(":${parent!!.properties["minecraft"]}:common", configuration = "namedElements")) {
+    "common"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:common", configuration = "transformProductionFabric")) {
+    "shadowCommon"(project(":common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
 }
@@ -81,7 +81,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.properties["minecraft"]}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }
@@ -117,7 +117,7 @@ if (modrinthId != null) {
             }
         }
 
-        (parent!!.properties["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
+        (parent!!.extra["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
     }
 }
 
@@ -147,7 +147,7 @@ if (cfId != null) {
             }
         }
 
-        (parent!!.properties["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
+        (parent!!.extra["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
     }
 }
 

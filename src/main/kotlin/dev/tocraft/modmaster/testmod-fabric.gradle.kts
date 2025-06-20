@@ -58,7 +58,7 @@ dependencies {
     "shadowCommon"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
-    "common"(project(":${parent!!.properties["minecraft"]}:common", configuration = "namedElements")) {
+    "common"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
 }
@@ -77,7 +77,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.properties["minecraft"]}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }

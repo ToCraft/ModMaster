@@ -32,7 +32,7 @@ plugins {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.properties["minecraft"]}:common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -56,10 +56,10 @@ configurations {
 dependencies {
     "neoForge"("net.neoforged:neoforge:${parent!!.properties["neoforge"]}")
 
-    "common"(project(":${parent!!.properties["minecraft"]}:common", configuration = "namedElements")) {
+    "common"(project(":common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:common", configuration = "transformProductionNeoForge")) {
+    "shadowCommon"(project(":common", configuration = "transformProductionNeoForge")) {
         isTransitive = false
     }
 }
@@ -78,7 +78,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.properties["minecraft"]}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }
@@ -113,7 +113,7 @@ if (modrinthId != null) {
             }
         }
 
-        (parent!!.properties["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
+        (parent!!.extra["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
     }
 }
 
@@ -141,7 +141,7 @@ if (cfId != null) {
             }
         }
 
-        (parent!!.properties["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
+        (parent!!.extra["supported_versions"] as List<*>).forEach { mainFile.addGameVersion((it as String).trim()) }
     }
 }
 

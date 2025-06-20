@@ -5,6 +5,7 @@ import com.diluv.schoomp.message.Message
 import com.diluv.schoomp.message.embed.Embed
 import java.io.FileWriter
 import java.io.IOException
+import java.util.ArrayList
 
 allprojects {
     repositories {
@@ -36,8 +37,19 @@ allprojects {
             withSourcesJar()
         }
     }
-
 }
+
+val supportedVersions = ArrayList<String>()
+supportedVersions.add(properties["minecraft"] as String)
+if (properties["supported_versions"] != null) {
+    (properties["supported_versions"] as String).split(",").forEach {
+        val version = it.trim()
+        if (!supportedVersions.contains(version)) {
+            supportedVersions.add(version)
+        }
+    }
+}
+project.extra.set("supported_versions", supportedVersions)
 
 project.extra.set("releaseChangelog", releaseChangelog(1))
 

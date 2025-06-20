@@ -87,7 +87,7 @@ if (modrinthId != null) {
     extensions.configure<ModrinthExtension> {
         token = System.getenv("MODRINTH_TOKEN")
         projectId = modrinthId as String
-        versionNumber = "${parent!!.properties["minecraft"]}-${project.name}-${project.version}"
+        versionNumber = "${project.name}-${project.version}"
         versionType = "${parent!!.properties["artifact_type"]}"
         uploadFile = tasks.getByName("remapJar")
         gameVersions = listOf()
@@ -117,7 +117,7 @@ if (cfId != null) {
 
         // The main file to upload
         val mainFile = upload("$cfId", tasks.getByName("remapJar"))
-        mainFile.displayName = "${parent!!.properties["minecraft"]}-${project.name}-${project.version}"
+        mainFile.displayName = "${project.name}-${project.version}"
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
@@ -142,7 +142,7 @@ extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenNeoForge") {
             artifactId = "${rootProject.properties["archives_base_name"]}-${project.name}"
-            version = (parent!!.properties["minecraft"] as String) + "-" + rootProject.properties["mod_version"]
+            version = rootProject.properties["mod_version"] as String
             from(components["java"])
         }
     }

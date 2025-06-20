@@ -16,27 +16,25 @@ allprojects {
     version = project.properties["mod_version"] as String
     group = project.properties["maven_group"] as String
 
-    allprojects {
-        apply(plugin = "java")
-        apply(plugin = "architectury-plugin")
+    apply(plugin = "java")
+    apply(plugin = "architectury-plugin")
 
-        repositories {
-            maven("https://maven.tocraft.dev/public")
-        }
-
-        extensions.configure<BasePluginExtension> {
-            archivesName = rootProject.properties["archives_base_name"] as String
-        }
-
-        tasks.withType<JavaCompile>().configureEach {
-            options.encoding = "UTF-8"
-            options.release.set(Integer.parseInt(properties["java"] as String))
-        }
-
-        extensions.configure<JavaPluginExtension> {
-            withSourcesJar()
-        }
+    repositories {
+        maven("https://maven.tocraft.dev/public")
     }
+
+    tasks.withType<JavaCompile>().configureEach {
+        options.encoding = "UTF-8"
+        options.release.set(Integer.parseInt(properties["java"] as String))
+    }
+
+    extensions.configure<JavaPluginExtension> {
+        withSourcesJar()
+    }
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["archives_base_name"] as String
 }
 
 val supportedVersions = ArrayList<String>()
@@ -123,7 +121,7 @@ tasks.register("discordRelease") {
             message.addEmbed(embed)
 
             webhook.sendMessage(message)
-        } catch (ignored: IOException) {
+        } catch (_: IOException) {
             println("Failed to push to the Discord webhook.")
         }
         println("Send Changelog to Discord.")
@@ -169,32 +167,33 @@ tasks.register<Zip>("packTheMod") {
     }
 
     subprojects.forEach { sub ->
-        sub.subprojects.forEach { subsub ->
-            dependsOn(subsub.tasks.getByName("build"))
+        if (!sub.name.startsWith("testmod")) {
+            from(sub.layout.buildDirectory.dir("libs/")) {
+                // Exclude paths
+                exclude("*-dev.jar")
+                exclude("*-shadow.jar")
+                exclude("*-transformProduction*.jar")
+            }
         }
+
+        dependsOn(sub.tasks.getByName("build"))
     }
 }
 
 tasks.register("release") {
     subprojects.forEach { sub ->
-        sub.subprojects.forEach { subsub ->
-            if (!subsub.name.startsWith("testmod")) {
-                dependsOn(subsub.tasks.getByName("publish"))
-            }
+        if (!sub.name.startsWith("testmod")) {
+            dependsOn(sub.tasks.getByName("publish"))
         }
     }
     subprojects.forEach { sub ->
-        sub.subprojects.forEach { subsub ->
-            if (!subsub.name.startsWith("testmod") && !subsub.name.contains("common")) {
-                dependsOn(subsub.tasks.getByName("modrinth"))
-            }
+        if (!sub.name.startsWith("testmod") && !sub.name.contains("common")) {
+            dependsOn(sub.tasks.getByName("modrinth"))
         }
     }
     subprojects.forEach { sub ->
-        sub.subprojects.forEach { subsub ->
-            if (!subsub.name.startsWith("testmod") && !subsub.name.contains("common")) {
-                dependsOn(subsub.tasks.getByName("curseforge"))
-            }
+        if (!sub.name.startsWith("testmod") && !sub.name.contains("common")) {
+            dependsOn(sub.tasks.getByName("curseforge"))
         }
     }
     dependsOn(tasks.getByPath("packTheMod"))

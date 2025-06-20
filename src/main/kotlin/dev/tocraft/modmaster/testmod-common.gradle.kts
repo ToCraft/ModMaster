@@ -7,19 +7,12 @@ import java.util.*
 
 projectDir.mkdirs()
 
-extensions.configure<SourceSetContainer> {
-    named("main") {
-        java {
-            setSrcDirs(listOf(rootDir.resolve("testmod-common/src/main/java")))
-        }
-        resources {
-            setSrcDirs(listOf(rootDir.resolve("testmod-common/src/main/resources")))
-        }
-    }
-}
-
 plugins {
     id("dev.tocraft.modmaster.general")
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
 }
 
 configurations {

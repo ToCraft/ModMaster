@@ -12,23 +12,16 @@ import java.util.*
 
 projectDir.mkdirs()
 
-extensions.configure<SourceSetContainer> {
-    named("main") {
-        java {
-            srcDir(rootDir.resolve("fabric/src/main/java"))
-        }
-        resources {
-            srcDir(rootDir.resolve("fabric/src/main/resources"))
-        }
-    }
-}
-
 plugins {
     id("maven-publish")
     id("com.gradleup.shadow")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
 }
 
 val commonAccessWidener: RegularFileProperty =

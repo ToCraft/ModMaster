@@ -6,20 +6,13 @@ import dev.architectury.plugin.ArchitectPluginExtension
 
 projectDir.mkdirs()
 
-extensions.configure<SourceSetContainer> {
-    named("main") {
-        java {
-            srcDir(rootDir.resolve("common/src/main/java"))
-        }
-        resources {
-            srcDir(rootDir.resolve("common/src/main/resources"))
-        }
-    }
-}
-
 plugins {
     id("dev.tocraft.modmaster.general")
     id("maven-publish")
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
 }
 
 configurations {

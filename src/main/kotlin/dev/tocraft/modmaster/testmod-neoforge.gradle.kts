@@ -9,20 +9,13 @@ import net.fabricmc.loom.task.RemapJarTask
 
 projectDir.mkdirs()
 
-extensions.configure<SourceSetContainer> {
-    named("main") {
-        java {
-            setSrcDirs(listOf(rootDir.resolve("testmod-neoforge/src/main/java")))
-        }
-        resources {
-            setSrcDirs(listOf(rootDir.resolve("testmod-neoforge/src/main/resources")))
-        }
-    }
-}
-
 plugins {
     id("com.gradleup.shadow")
     id("dev.tocraft.modmaster.general")
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
 }
 
 val commonAccessWidener: RegularFileProperty =

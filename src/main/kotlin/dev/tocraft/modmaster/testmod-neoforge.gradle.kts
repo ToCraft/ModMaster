@@ -82,7 +82,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":${parent!!.name}:common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":${parent!!.name}:testmod-common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }

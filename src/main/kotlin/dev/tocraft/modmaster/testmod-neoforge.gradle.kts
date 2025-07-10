@@ -19,7 +19,7 @@ extensions.configure<BasePluginExtension> {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.properties["minecraft"]}:testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -43,10 +43,10 @@ configurations {
 dependencies {
     "neoForge"("net.neoforged:neoforge:${parent!!.properties["neoforge"]}")
 
-    "common"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "namedElements")) {
+    "common"(project(":testmod-common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "transformProductionNeoForge")) {
+    "shadowCommon"(project(":testmod-common", configuration = "transformProductionNeoForge")) {
         isTransitive = false
     }
     "common"(project(":common", configuration = "namedElements")) {
@@ -68,7 +68,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":testmod-common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }

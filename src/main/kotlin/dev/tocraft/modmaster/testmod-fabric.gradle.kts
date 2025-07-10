@@ -19,7 +19,7 @@ extensions.configure<BasePluginExtension> {
 }
 
 val commonAccessWidener: RegularFileProperty =
-    project(":${parent!!.properties["minecraft"]}:testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+    project(":testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
 
 if (commonAccessWidener.isPresent) {
     extensions.configure<LoomGradleExtensionAPI> {
@@ -44,10 +44,10 @@ dependencies {
     "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
     "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
 
-    "common"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "namedElements")) {
+    "common"(project(":testmod-common", configuration = "namedElements")) {
         isTransitive = false
     }
-    "shadowCommon"(project(":${parent!!.properties["minecraft"]}:testmod-common", configuration = "transformProductionFabric")) {
+    "shadowCommon"(project(":testmod-common", configuration = "transformProductionFabric")) {
         isTransitive = false
     }
     "common"(project(":common", configuration = "namedElements")) {
@@ -56,7 +56,6 @@ dependencies {
 }
 
 tasks.getByName<ShadowJar>("shadowJar") {
-    exclude("fabric.mod.json")
     exclude("architectury.common.json")
     configurations = listOf(project.configurations["shadowCommon"])
     archiveClassifier = "dev-shadow"
@@ -69,7 +68,7 @@ tasks.getByName<RemapJarTask>("remapJar") {
 }
 
 tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
+    val commonSources = project(":testmod-common").tasks.getByName<Jar>("sourcesJar")
     dependsOn(commonSources)
     from(commonSources.archiveFile.map { zipTree(it) })
 }

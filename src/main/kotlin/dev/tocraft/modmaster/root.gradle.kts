@@ -148,22 +148,24 @@ tasks.register<Zip>("packTheMod") {
 
     // Include paths
     from(layout.buildDirectory) {
-        include("**/**/libs/**")
+        include("**/build/libs/**")
         // Exclude paths
+        exclude("reports/")
+        exclude("tmp/")
         exclude("*/libs/")
         exclude("libs/")
         exclude("**/*-dev.jar")
         exclude("**/*-shadow.jar")
         exclude("**/*-transformProduction*.jar")
         exclude("**/testmod*/**")
-        exclude("**/**/tmp/")
-        exclude("**/**/resources/")
-        exclude("**/**/processIncludeJars/")
-        exclude("**/**/generated/")
-        exclude("**/**/devlibs/")
-        exclude("**/**/classes/")
-        exclude("**/**/publications/")
-        exclude("**/**/loom-cache/")
+        exclude("**/build/tmp/")
+        exclude("**/build/resources/")
+        exclude("**/build/processIncludeJars/")
+        exclude("**/build/generated/")
+        exclude("**/build/devlibs/")
+        exclude("**/build/classes/")
+        exclude("**/build/publications/")
+        exclude("**/build/loom-cache/")
     }
 
     subprojects.forEach { sub ->

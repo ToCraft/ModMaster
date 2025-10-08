@@ -73,8 +73,3 @@ tasks.getByName<Jar>("sourcesJar") {
     from(commonSources.archiveFile.map { zipTree(it) })
 }
 
-components.named<AdhocComponentWithVariants>("java") {
-    withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) {
-        skip()
-    }
-}

@@ -76,12 +76,6 @@ tasks.getByName<Jar>("sourcesJar") {
     from(commonSources.archiveFile.map { zipTree(it) })
 }
 
-components.named<AdhocComponentWithVariants>("java") {
-    withVariantsFromConfiguration(project.configurations["shadowRuntimeElements"]) {
-        skip()
-    }
-}
-
 val modrinthId = parent!!.properties["modrinth_id"]
 if (modrinthId != null) {
     extensions.configure<ModrinthExtension> {

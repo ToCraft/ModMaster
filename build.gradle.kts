@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     `kotlin-dsl`
@@ -14,13 +13,13 @@ java {
     withSourcesJar()
 
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
@@ -30,6 +29,7 @@ repositories {
     maven("https://maven.fabricmc.net/")
     maven("https://maven.minecraftforge.net")
     maven("https://maven.architectury.dev/")
+    maven("https://maven.tocraft.dev/public")
     mavenLocal()
 }
 
@@ -37,13 +37,13 @@ dependencies {
     implementation(gradleApi())
     implementation(localGroovy())
 
-    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.10-SNAPSHOT")
+    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.11-SNAPSHOT")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
     api("com.gradleup.shadow:shadow-gradle-plugin:8.3.6")
-    api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.26")
-    api("com.modrinth.minotaur:Minotaur:2.8.7")
-    api("com.diluv.schoomp:Schoomp:1.2.6")
+    api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.27")
+    api("com.modrinth.minotaur:Minotaur:2.8.10")
+    api("com.diluv.schoomp:Schoomp:1.2.7")
 
     annotationProcessor("com.google.auto.service:auto-service:1.1.1")
     compileOnly("com.google.auto.service:auto-service:1.1.1")

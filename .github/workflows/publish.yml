@@ -2,9 +2,15 @@ name: Publish
 
 on:
   push:
+    paths:
+      - '**.gradle'
+      - '**.gradle.kts'
+      - '**.properties'
+      - '**/src/**'
     branches:
       - "multi"
       - "single"
+    workflow_dispatch:
 
 jobs:
   build:

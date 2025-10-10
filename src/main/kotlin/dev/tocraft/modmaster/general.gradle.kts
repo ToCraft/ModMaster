@@ -14,9 +14,7 @@ extensions.configure<LoomGradleExtensionAPI> {
 }
 
 // dummy source set so I do not need to implement any mod dependency at all - I just need dummies
-val dummySource: SourceSet by sourceSets.creating {
-    java.srcDir("src/dummy/java")
-
+val dummy: SourceSet by sourceSets.creating {
     // Only inherit main's dependencies (not output) to avoid circularity
     compileClasspath += sourceSets["main"].compileClasspath
     runtimeClasspath += sourceSets["main"].runtimeClasspath
@@ -24,12 +22,12 @@ val dummySource: SourceSet by sourceSets.creating {
 
 // compile dummy before main
 tasks.named("compileJava") {
-    dependsOn(tasks.named("compileDummySourceJava"))
+    dependsOn(tasks.named("compileDummyJava"))
 }
 
 // make main use dummy
-sourceSets["main"].compileClasspath += dummySource.output
-sourceSets["main"].runtimeClasspath += dummySource.output
+sourceSets["main"].compileClasspath += dummy.output
+sourceSets["main"].runtimeClasspath += dummy.output
 
 dependencies {
     minecraft("com.mojang:minecraft:${parent!!.properties["minecraft"]}")

@@ -37,7 +37,7 @@ dependencies {
     implementation(gradleApi())
     implementation(localGroovy())
 
-    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.11-SNAPSHOT")
+    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.13.457")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
     api("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")

@@ -40,7 +40,7 @@ dependencies {
     api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.11-SNAPSHOT")
     api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
 
-    api("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")
+    api("com.gradleup.shadow:shadow-gradle-plugin:9.3.0")
     api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.28")
     api("com.modrinth.minotaur:Minotaur:2.8.10")
     api("com.diluv.schoomp:Schoomp:1.2.7")

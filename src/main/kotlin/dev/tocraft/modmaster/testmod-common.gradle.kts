@@ -1,45 +1,46 @@
-@file:Suppress("UnstableApiUsage")
-
 package dev.tocraft.modmaster
 
-import dev.architectury.plugin.ArchitectPluginExtension
-import java.util.*
+import gradle.kotlin.dsl.accessors._c78d6f6431bc0f1c6a7b6cafff4f4931.compileOnly
 
 projectDir.mkdirs()
 
 plugins {
     id("dev.tocraft.modmaster.general")
+    id("net.neoforged.moddev")
 }
 
 extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
+    archivesName = rootProject.properties["modid"] as String + "-" + project.name
 }
 
-configurations {
-    maybeCreate("dev")
+val javaVersion = (property("java") as String).toInt()
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    withSourcesJar()
+}
+
+neoForge {
+    neoFormVersion = property("neoform_version") as String
+}
+
+// Expose common sources as consumable artifacts for loader subprojects
+val commonJava: Configuration by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+}
+val commonResources: Configuration by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
 }
 
 artifacts {
-    add("dev", tasks["jar"])
-}
-
-extensions.configure<ArchitectPluginExtension> {
-    val platforms = mutableListOf<String>()
-    if (parent!!.properties["fabric"] != null) {
-        platforms.add("fabric")
-    }
-    if (parent!!.properties["forge"] != null) {
-        platforms.add("forge")
-    }
-    if (parent!!.properties["neoforge"] != null) {
-        platforms.add("neoforge")
-    }
-    common(platforms)
+    add("commonJava", sourceSets.main.get().java.sourceDirectories.singleFile)
+    add("commonResources", sourceSets.main.get().resources.sourceDirectories.singleFile)
 }
 
 dependencies {
-    "implementation"(project(":common", configuration = "namedElements"))
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    modImplementation("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
+    compileOnly("net.fabricmc:fabric-loader:${property("fabric_loader")}")
+    compileOnly(project(":common"))
 }
+

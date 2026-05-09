@@ -1,74 +1,44 @@
-@file:Suppress("UnstableApiUsage")
-
 package dev.tocraft.modmaster
-
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import dev.architectury.plugin.ArchitectPluginExtension
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.RemapJarTask
 
 projectDir.mkdirs()
 
 plugins {
-    id("com.gradleup.shadow")
+    id("com.modrinth.minotaur")
+    id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
+    id("net.fabricmc.fabric-loom")
 }
 
-extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
+val javaVersion = (property("java") as String).toInt()
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    withSourcesJar()
 }
 
-val commonAccessWidener: RegularFileProperty =
-    project(":testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
-
-if (commonAccessWidener.isPresent) {
-    extensions.configure<LoomGradleExtensionAPI> {
-        accessWidenerPath.set(commonAccessWidener)
-    }
-}
-
-extensions.configure<ArchitectPluginExtension> {
-    platformSetupLoomIde()
-    fabric()
-}
-
-configurations {
-    maybeCreate("common")
-    maybeCreate("shadowCommon")
-    maybeCreate("compileClasspath").extendsFrom(getByName("common"))
-    maybeCreate("runtimeClasspath").extendsFrom(getByName("common"))
-    maybeCreate("developmentFabric").extendsFrom(getByName("common"))
-}
+// Resolve common sources from :common subproject
+val commonJava: Configuration by configurations.creating { isCanBeResolved = true }
+val commonResources: Configuration by configurations.creating { isCanBeResolved = true }
 
 dependencies {
-    "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
-    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
+    minecraft("com.mojang:minecraft:${property("minecraft")}")
+    implementation("net.fabricmc:fabric-loader:${property("fabric_loader")}")
 
-    "common"(project(":testmod-common", configuration = "namedElements")) {
-        isTransitive = false
-    }
-    "shadowCommon"(project(":testmod-common", configuration = "transformProductionFabric")) {
-        isTransitive = false
-    }
-    "common"(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
+    implementation(project(":fabric"))
+
+    commonJava(project(":testmod-common", "commonJava"))
+    commonResources(project(":testmod-common", "commonResources"))
 }
 
-tasks.getByName<ShadowJar>("shadowJar") {
-    exclude("architectury.common.json")
-    configurations = listOf(project.configurations["shadowCommon"])
-    archiveClassifier = "dev-shadow"
+// Include common sources in this compilation
+tasks.compileJava { source(commonJava) }
+tasks.javadoc { source(commonJava) }
+
+tasks.named<Jar>("sourcesJar") {
+    from(commonJava)
+    from(commonResources)
 }
 
-
-tasks.getByName<RemapJarTask>("remapJar") {
-    dependsOn(tasks.getByName<ShadowJar>("shadowJar"))
-    inputFile.set(tasks.getByName<ShadowJar>("shadowJar").archiveFile)
-}
-
-tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":testmod-common").tasks.getByName<Jar>("sourcesJar")
-    dependsOn(commonSources)
-    from(commonSources.archiveFile.map { zipTree(it) })
+tasks.processResources {
+    from(commonResources)
 }

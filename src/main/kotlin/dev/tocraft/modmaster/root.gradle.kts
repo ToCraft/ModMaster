@@ -5,19 +5,14 @@ import com.diluv.schoomp.message.Message
 import com.diluv.schoomp.message.embed.Embed
 import java.io.FileWriter
 import java.io.IOException
-import java.util.ArrayList
 
 allprojects {
-    repositories {
-        maven("https://maven.parchmentmc.org")
-        maven("https://maven.neoforged.net/releases/")
-    }
-
     version = project.properties["mod_version"] as String
     group = project.properties["maven_group"] as String
+}
 
+subprojects {
     apply(plugin = "java")
-    apply(plugin = "architectury-plugin")
 
     repositories {
         maven("https://maven.tocraft.dev/public")
@@ -27,14 +22,6 @@ allprojects {
         options.encoding = "UTF-8"
         options.release.set(Integer.parseInt(properties["java"] as String))
     }
-
-    extensions.configure<JavaPluginExtension> {
-        withSourcesJar()
-    }
-}
-
-extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String
 }
 
 val supportedVersions = ArrayList<String>()
@@ -47,9 +34,9 @@ if (properties["supported_versions"] != null) {
         }
     }
 }
-project.extra.set("supported_versions", supportedVersions)
+project.extra["supported_versions"] = supportedVersions
 
-project.extra.set("releaseChangelog", releaseChangelog(1))
+project.extra["releaseChangelog"] = releaseChangelog(1)
 
 fun releaseChangelog(versions: Int): String {
     try {
@@ -68,7 +55,7 @@ fun releaseChangelog(versions: Int): String {
         }
         return changelog + "\n\n"
     } catch (exception: Exception) {
-        return "${rootProject.properties["archives_base_name"]} ${rootProject.properties["mod_version"]}\n==========\nThere was an error generating the changelog" + exception.localizedMessage
+        return "${rootProject.properties["modid"]} ${rootProject.properties["mod_version"]}\n==========\nThere was an error generating the changelog" + exception.localizedMessage
     }
 }
 
@@ -100,13 +87,13 @@ tasks.register("discordRelease") {
             val webhook = Webhook(System.getenv("DISCORD_WEB_HOOK"), "${project.name} Upload")
 
             val message = Message()
-            message.setUsername("Mod Release")
+            message.username = "Mod Release"
             var content = "${project.name} ${rootProject.properties["mod_version"]} has been released!"
             if (rootProject.hasProperty("ping_role")) {
                 content = "<@&${rootProject.properties["ping_role"]}> " + content
             }
-            message.setContent(content)
-            message.setAvatarUrl("https://avatars.githubusercontent.com/u/38883321")
+            message.content = content
+            message.avatarUrl = "https://avatars.githubusercontent.com/u/38883321"
 
             val embed = Embed()
 
@@ -117,7 +104,7 @@ tasks.register("discordRelease") {
                 changelog.forEach {
                     embed.addField("Change Log", "```md\n${it}```", false)
                 }
-            embed.setColor(0xFF8000)
+            embed.color = 0xFF8000
             message.addEmbed(embed)
 
             webhook.sendMessage(message)
@@ -143,7 +130,7 @@ tasks.register("extractNewestChangelog") {
 
 
 tasks.register<Zip>("packTheMod") {
-    archiveFileName.set("${rootProject.properties["archives_base_name"]}-${rootProject.version}.zip")
+    archiveFileName.set("${rootProject.properties["modid"]}-${rootProject.version}.zip")
     destinationDirectory.set(project.layout.buildDirectory)
 
     // Include paths

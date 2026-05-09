@@ -1,75 +1,74 @@
-@file:Suppress("UnstableApiUsage")
-
 package dev.tocraft.modmaster
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import dev.architectury.plugin.ArchitectPluginExtension
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.RemapJarTask
+import gradle.kotlin.dsl.accessors._a469da590ad9b9775c7d12b50e105794.main
+import gradle.kotlin.dsl.accessors._a469da590ad9b9775c7d12b50e105794.sourceSets
 
 projectDir.mkdirs()
 
 plugins {
-    id("com.gradleup.shadow")
+    id("com.modrinth.minotaur")
+    id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
+    id("net.neoforged.moddev")
 }
 
 extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
+    archivesName = rootProject.properties["modid"] as String + "-" + project.name
 }
 
-val commonAccessWidener: RegularFileProperty =
-    project(":testmod-common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
+val javaVersion = (property("java") as String).toInt()
 
-if (commonAccessWidener.isPresent) {
-    extensions.configure<LoomGradleExtensionAPI> {
-        accessWidenerPath.set(commonAccessWidener)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    withSourcesJar()
+}
+
+// Resolve common sources from :common subproject
+val commonJava: Configuration by configurations.creating { isCanBeResolved = true }
+val commonResources: Configuration by configurations.creating { isCanBeResolved = true }
+
+neoForge {
+    version = property("neoforge") as String
+
+    runs {
+        mods {
+            create(rootProject.properties["modid"] as String) {
+                sourceSet(project(":neoforge").sourceSets.main.get())
+            }
+            create("testmod") {
+                sourceSet(sourceSets.main.get())
+            }
+        }
+        create("client") {
+            client()
+        }
+
+        create("server") {
+            server()
+            programArgument("--nogui")
+        }
     }
-}
-
-extensions.configure<ArchitectPluginExtension> {
-    platformSetupLoomIde()
-    neoForge()
-}
-
-configurations {
-    maybeCreate("common")
-    maybeCreate("shadowCommon")
-    maybeCreate("compileClasspath").extendsFrom(getByName("common"))
-    maybeCreate("runtimeClasspath").extendsFrom(getByName("common"))
-    maybeCreate("developmentNeoforge").extendsFrom(getByName("common"))
 }
 
 dependencies {
-    "neoForge"("net.neoforged:neoforge:${parent!!.properties["neoforge"]}")
+    commonJava(project(":testmod-common", "commonJava"))
+    commonResources(project(":testmod-common", "commonResources"))
 
-    "common"(project(":testmod-common", configuration = "namedElements")) {
-        isTransitive = false
-    }
-    "shadowCommon"(project(":testmod-common", configuration = "transformProductionNeoForge")) {
-        isTransitive = false
-    }
-    "common"(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
+    implementation(project(":neoforge"))
+
+    // Needed to compile common sources that use @Environment(EnvType.CLIENT)
+    compileOnly("net.fabricmc:fabric-loader:${property("fabric_loader")}")
 }
 
-tasks.getByName<ShadowJar>("shadowJar") {
-    exclude("fabric.mod.json")
-    exclude("architectury.common.json")
-    configurations = listOf(project.configurations["shadowCommon"])
-    archiveClassifier = "dev-shadow"
+// Include common sources in this compilation
+tasks.compileJava { source(commonJava) }
+tasks.javadoc { source(commonJava) }
+
+tasks.named<Jar>("sourcesJar") {
+    from(commonJava)
+    from(commonResources)
 }
 
-
-tasks.getByName<RemapJarTask>("remapJar") {
-    dependsOn(tasks.getByName<ShadowJar>("shadowJar"))
-    inputFile.set(tasks.getByName<ShadowJar>("shadowJar").archiveFile)
+tasks.processResources {
+    from(commonResources)
 }
-
-tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":testmod-common").tasks.getByName<Jar>("sourcesJar")
-    dependsOn(commonSources)
-    from(commonSources.archiveFile.map { zipTree(it) })
-}
-

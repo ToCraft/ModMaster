@@ -28,25 +28,25 @@ repositories {
     gradlePluginPortal()
     maven("https://maven.fabricmc.net/")
     maven("https://maven.minecraftforge.net")
-    maven("https://maven.architectury.dev/")
     maven("https://maven.tocraft.dev/public")
     mavenLocal()
 }
 
 dependencies {
+    // gradle stuff
     implementation(gradleApi())
     implementation(localGroovy())
-
-    api("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.11-SNAPSHOT")
-    api("architectury-plugin:architectury-plugin.gradle.plugin:3.4-SNAPSHOT")
-
-    api("com.gradleup.shadow:shadow-gradle-plugin:9.2.2")
-    api("net.darkhax.curseforgegradle:CurseForgeGradle:1.1.28")
-    api("com.modrinth.minotaur:Minotaur:2.8.10")
-    api("com.diluv.schoomp:Schoomp:1.2.7")
-
     annotationProcessor("com.google.auto.service:auto-service:1.1.1")
     compileOnly("com.google.auto.service:auto-service:1.1.1")
+
+    // publishing
+    api("net.darkhax.curseforgegradle:net.darkhax.curseforgegradle.gradle.plugin:1.1.28")
+    api("com.modrinth.minotaur:Minotaur:2.9.0")
+    api("com.diluv.schoomp:Schoomp:1.2.7")
+
+    // mod loader
+    api("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:2.0.141")
+    api("net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:1.16-SNAPSHOT")
 }
 
 publishing {

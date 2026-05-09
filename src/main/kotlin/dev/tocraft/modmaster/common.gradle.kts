@@ -1,53 +1,51 @@
-@file:Suppress("UnstableApiUsage")
-
 package dev.tocraft.modmaster
-
-import dev.architectury.plugin.ArchitectPluginExtension
 
 projectDir.mkdirs()
 
 plugins {
     id("dev.tocraft.modmaster.general")
     id("maven-publish")
+    id("net.neoforged.moddev")
 }
 
 extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
+    archivesName = rootProject.properties["modid"] as String + "-" + project.name
 }
 
-configurations {
-    maybeCreate("dev")
+val javaVersion = (property("java") as String).toInt()
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    withSourcesJar()
+}
+
+neoForge {
+    neoFormVersion = property("neoform_version") as String
+}
+
+// Expose common sources as consumable artifacts for loader subprojects
+val commonJava: Configuration by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+}
+val commonResources: Configuration by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
 }
 
 artifacts {
-    add("dev", tasks["jar"])
+    add("commonJava", sourceSets.main.get().java.sourceDirectories.singleFile)
+    add("commonResources", sourceSets.main.get().resources.sourceDirectories.singleFile)
 }
-
-extensions.configure<ArchitectPluginExtension> {
-    val platforms = mutableListOf<String>()
-    if (parent!!.properties["fabric"] != null) {
-        platforms.add("fabric")
-    }
-    if (parent!!.properties["forge"] != null) {
-        platforms.add("forge")
-    }
-    if (parent!!.properties["neoforge"] != null) {
-        platforms.add("neoforge")
-    }
-    common(platforms)
-}
-
 
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    modImplementation("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
+    compileOnly("net.fabricmc:fabric-loader:${property("fabric_loader")}")
 }
 
 extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenCommon") {
-            artifactId = rootProject.properties["archives_base_name"] as String
+            artifactId = rootProject.properties["modid"] as String
             version = rootProject.properties["mod_version"] as String
             from(components["java"])
         }

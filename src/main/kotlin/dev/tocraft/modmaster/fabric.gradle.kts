@@ -1,82 +1,48 @@
-@file:Suppress("UnstableApiUsage")
-
 package dev.tocraft.modmaster
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.modrinth.minotaur.ModrinthExtension
-import dev.architectury.plugin.ArchitectPluginExtension
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.RemapJarTask
-import java.util.*
 
 projectDir.mkdirs()
 
 plugins {
     id("maven-publish")
-    id("com.gradleup.shadow")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
+    id("net.fabricmc.fabric-loom")
 }
 
-extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["archives_base_name"] as String + "-" + project.name
+val javaVersion = (property("java") as String).toInt()
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    withSourcesJar()
 }
 
-val commonAccessWidener: RegularFileProperty =
-    project(":common").extensions.getByName<LoomGradleExtensionAPI>("loom").accessWidenerPath
-
-if (commonAccessWidener.isPresent) {
-    extensions.configure<LoomGradleExtensionAPI> {
-        accessWidenerPath.set(commonAccessWidener)
-    }
-}
-
-extensions.configure<ArchitectPluginExtension> {
-    platformSetupLoomIde()
-    fabric()
-}
-
-configurations {
-    maybeCreate("common")
-    maybeCreate("shadowCommon")
-    maybeCreate("compileClasspath").extendsFrom(getByName("common"))
-    maybeCreate("runtimeClasspath").extendsFrom(getByName("common"))
-    maybeCreate("developmentFabric").extendsFrom(getByName("common"))
-}
+// Resolve common sources from :common subproject
+val commonJava: Configuration by configurations.creating { isCanBeResolved = true }
+val commonResources: Configuration by configurations.creating { isCanBeResolved = true }
 
 dependencies {
-    "modImplementation"("net.fabricmc:fabric-loader:${parent!!.properties["fabric_loader"]}")
-    "modApi"("net.fabricmc.fabric-api:fabric-api:${parent!!.properties["fabric"]}+${parent!!.properties["minecraft"]}")
+    minecraft("com.mojang:minecraft:${property("minecraft")}")
+    implementation("net.fabricmc:fabric-loader:${property("fabric_loader")}")
 
-    "common"(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
-    "shadowCommon"(project(":common", configuration = "transformProductionFabric")) {
-        isTransitive = false
-    }
+    commonJava(project(":common", "commonJava"))
+    commonResources(project(":common", "commonResources"))
 }
 
-tasks.getByName<ShadowJar>("shadowJar") {
-    exclude("architectury.common.json")
-    configurations = listOf(project.configurations["shadowCommon"])
-    archiveClassifier = "dev-shadow"
+// Include common sources in this compilation
+tasks.compileJava { source(commonJava) }
+tasks.javadoc { source(commonJava) }
+
+tasks.named<Jar>("sourcesJar") {
+    from(commonJava)
+    from(commonResources)
 }
 
-
-tasks.getByName<RemapJarTask>("remapJar") {
-    if (commonAccessWidener.isPresent) {
-        injectAccessWidener = true
-    }
-    dependsOn(tasks.getByName<ShadowJar>("shadowJar"))
-    inputFile.set(tasks.getByName<ShadowJar>("shadowJar").archiveFile)
-}
-
-tasks.getByName<Jar>("sourcesJar") {
-    val commonSources = project(":common").tasks.getByName<Jar>("sourcesJar")
-    dependsOn(commonSources)
-    from(commonSources.archiveFile.map { zipTree(it) })
+tasks.processResources {
+    from(commonResources)
 }
 
 val modrinthId = parent!!.properties["modrinth_id"]
@@ -86,7 +52,7 @@ if (modrinthId != null) {
         projectId = modrinthId as String
         versionNumber = "${project.name}-${project.version}"
         versionType = "${parent!!.properties["artifact_type"]}"
-        uploadFile = tasks.getByName("remapJar")
+        uploadFile = components["java"]
         gameVersions = listOf()
         loaders = listOf("fabric", "quilt")
         changelog.set(rootProject.ext.get("releaseChangelog") as String)
@@ -114,7 +80,7 @@ if (cfId != null) {
         apiToken = System.getenv("CURSEFORGE_TOKEN")
 
         // The main file to upload
-        val mainFile = upload("$cfId", tasks.getByName("remapJar"))
+        val mainFile = upload("$cfId", components["java"])
         mainFile.displayName = "${project.name}-${project.version}"
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
@@ -141,7 +107,7 @@ if (cfId != null) {
 extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenFabric") {
-            artifactId = "${rootProject.properties["archives_base_name"]}-${project.name}"
+            artifactId = "${rootProject.properties["modid"]}-${project.name}"
             version = rootProject.properties["mod_version"] as String
             from(components["java"])
         }

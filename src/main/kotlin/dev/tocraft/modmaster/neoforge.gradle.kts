@@ -28,6 +28,12 @@ java {
 val commonJava: Configuration by configurations.creating { isCanBeResolved = true }
 val commonResources: Configuration by configurations.creating { isCanBeResolved = true }
 
+// make use of common dummy
+val commonDummy: SourceSet = project(":common").extensions.getByType<SourceSetContainer>().getByName("dummy")
+val sourceSets = extensions.getByType<SourceSetContainer>()
+sourceSets["main"].compileClasspath += commonDummy.output
+sourceSets["main"].runtimeClasspath += commonDummy.output
+
 neoForge {
     version = property("neoforge") as String
 
@@ -35,6 +41,7 @@ neoForge {
         mods {
             create(rootProject.properties["modid"] as String) {
                 sourceSet(sourceSets.main.get())
+                sourceSet(commonDummy)
             }
         }
         create("client") {

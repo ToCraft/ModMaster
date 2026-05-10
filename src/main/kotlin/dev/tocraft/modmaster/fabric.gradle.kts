@@ -20,6 +20,12 @@ java {
     withSourcesJar()
 }
 
+// make use of common dummy
+val commonDummy: SourceSet = project(":common").extensions.getByType<SourceSetContainer>().getByName("dummy")
+val sourceSets = extensions.getByType<SourceSetContainer>()
+sourceSets["main"].compileClasspath += commonDummy.output
+sourceSets["main"].runtimeClasspath += commonDummy.output
+
 // Resolve common sources from :common subproject
 val commonJava: Configuration by configurations.creating { isCanBeResolved = true }
 val commonResources: Configuration by configurations.creating { isCanBeResolved = true }

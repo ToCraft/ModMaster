@@ -46,7 +46,7 @@ dependencies {
 
     // mod loader
     api("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:2.0.141")
-    api("net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:1.16-SNAPSHOT")
+    api("net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:1.16.1")
 }
 
 publishing {

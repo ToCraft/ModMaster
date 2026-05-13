@@ -1,7 +1,9 @@
 package dev.tocraft.modmaster
 
 import com.modrinth.minotaur.ModrinthExtension
+import gradle.kotlin.dsl.accessors._c78d6f6431bc0f1c6a7b6cafff4f4931.compileOnly
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import java.util.Locale.getDefault
 
 projectDir.mkdirs()
 
@@ -60,7 +62,10 @@ dependencies {
     commonResources(project(":common", "commonResources"))
 
     // Needed to compile common sources that use @Environment(EnvType.CLIENT)
-    compileOnly("net.fabricmc:fabric-loader:${property("fabric_loader")}")
+    val fabricenv : String? = findProperty("use_fabricenv") as String?
+    if (!fabricenv.equals("false", ignoreCase = true)) {
+        compileOnly("dev.tocraft:fabricenv:1.0")
+    }
 }
 
 // Include common sources in this compilation

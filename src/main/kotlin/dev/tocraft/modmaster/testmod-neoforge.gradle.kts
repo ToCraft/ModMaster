@@ -3,8 +3,6 @@ package dev.tocraft.modmaster
 projectDir.mkdirs()
 
 plugins {
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
     id("net.neoforged.moddev")
 }

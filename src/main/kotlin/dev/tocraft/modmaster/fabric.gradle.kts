@@ -66,7 +66,7 @@ if (modrinthId != null) {
         projectId = modrinthId as String
         versionNumber = "${project.name}-${project.version}"
         versionType = "${parent!!.properties["artifact_type"]}"
-        uploadFile = components["java"]
+        uploadFile.set(tasks.named<Jar>("jar"))
         gameVersions = listOf()
         loaders = listOf("fabric", "quilt")
         changelog.set(rootProject.ext.get("releaseChangelog") as String)
@@ -94,7 +94,7 @@ if (cfId != null) {
         apiToken = System.getenv("CURSEFORGE_TOKEN")
 
         // The main file to upload
-        val mainFile = upload("$cfId", components["java"])
+        val mainFile = upload("$cfId", tasks.named<Jar>("jar"))
         mainFile.displayName = "${project.name}-${project.version}"
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")

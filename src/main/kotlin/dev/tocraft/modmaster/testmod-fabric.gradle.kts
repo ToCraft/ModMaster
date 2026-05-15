@@ -5,8 +5,6 @@ import gradle.kotlin.dsl.accessors._58b8aed1b243e11ec84f3ca9a5f259a9.compileOnly
 projectDir.mkdirs()
 
 plugins {
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
     id("net.fabricmc.fabric-loom")
 }

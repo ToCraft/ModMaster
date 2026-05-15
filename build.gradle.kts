@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.tocraft"
-version = "2.3-SNAPSHOT"
+version = "2.4-SNAPSHOT"
 
 java {
     withSourcesJar()

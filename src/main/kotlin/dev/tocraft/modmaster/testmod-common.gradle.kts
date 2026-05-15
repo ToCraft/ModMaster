@@ -1,7 +1,6 @@
 package dev.tocraft.modmaster
 
 import gradle.kotlin.dsl.accessors._c78d6f6431bc0f1c6a7b6cafff4f4931.compileOnly
-import java.util.Locale.getDefault
 
 projectDir.mkdirs()
 
@@ -11,7 +10,7 @@ plugins {
 }
 
 extensions.configure<BasePluginExtension> {
-    archivesName = rootProject.properties["modid"] as String + "-" + project.name
+    archivesName = "testmod-" + project.name
 }
 
 val javaVersion = (property("java") as String).toInt()
@@ -44,7 +43,7 @@ dependencies {
     compileOnly(project(":common"))
 
     // Needed to compile common sources that use @Environment(EnvType.CLIENT)
-    val fabricenv : String? = findProperty("use_fabricenv") as String?
+    val fabricenv: String? = findProperty("use_fabricenv") as String?
     if (!fabricenv.equals("false", ignoreCase = true)) {
         compileOnly("dev.tocraft:fabricenv:1.0")
     }

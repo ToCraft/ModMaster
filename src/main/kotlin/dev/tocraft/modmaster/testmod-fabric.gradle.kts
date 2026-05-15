@@ -1,5 +1,7 @@
 package dev.tocraft.modmaster
 
+import gradle.kotlin.dsl.accessors._58b8aed1b243e11ec84f3ca9a5f259a9.compileOnly
+
 projectDir.mkdirs()
 
 plugins {
@@ -7,6 +9,10 @@ plugins {
     id("net.darkhax.curseforgegradle")
     id("dev.tocraft.modmaster.general")
     id("net.fabricmc.fabric-loom")
+}
+
+extensions.configure<BasePluginExtension> {
+    archivesName = "testmod-" + project.name
 }
 
 val javaVersion = (property("java") as String).toInt()
@@ -34,6 +40,9 @@ dependencies {
 
     commonJava(project(":testmod-common", "commonJava"))
     commonResources(project(":testmod-common", "commonResources"))
+
+    // for IDEA detection
+    compileOnly(project(":testmod-common"))
 }
 
 // Include common sources in this compilation

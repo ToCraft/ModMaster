@@ -13,6 +13,10 @@ plugins {
     id("net.fabricmc.fabric-loom")
 }
 
+extensions.configure<BasePluginExtension> {
+    archivesName = rootProject.properties["modid"] as String + "-" + project.name
+}
+
 val javaVersion = (property("java") as String).toInt()
 
 java {
@@ -36,6 +40,9 @@ dependencies {
 
     commonJava(project(":common", "commonJava"))
     commonResources(project(":common", "commonResources"))
+
+    // for IDEA detection
+    compileOnly(project(":common"))
 }
 
 // Include common sources in this compilation
@@ -49,6 +56,7 @@ tasks.named<Jar>("sourcesJar") {
 
 tasks.processResources {
     from(commonResources)
+    outputs.upToDateWhen { false }
 }
 
 val modrinthId = parent!!.properties["modrinth_id"]

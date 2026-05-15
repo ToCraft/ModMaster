@@ -1,8 +1,5 @@
 package dev.tocraft.modmaster
 
-import java.util.Locale
-import java.util.Locale.getDefault
-
 projectDir.mkdirs()
 
 plugins {
@@ -43,7 +40,7 @@ artifacts {
 
 dependencies {
     // Needed to compile common sources that use @Environment(EnvType.CLIENT)
-    val fabricenv : String? = findProperty("use_fabricenv") as String?
+    val fabricenv: String? = findProperty("use_fabricenv") as String?
     if (!fabricenv.equals("false", ignoreCase = true)) {
         compileOnly("dev.tocraft:fabricenv:1.0")
     }

@@ -41,7 +41,7 @@ dependencies {
     compileOnly("com.google.auto.service:auto-service:1.1.1")
 
     // publishing
-    api("net.darkhax.curseforgegradle:net.darkhax.curseforgegradle.gradle.plugin:1.2.30")
+    api("net.darkhax.curseforgegradle:net.darkhax.curseforgegradle.gradle.plugin:1.3.32")
     api("com.modrinth.minotaur:Minotaur:2.9.0")
     api("com.diluv.schoomp:Schoomp:1.2.7")
 

@@ -1,7 +1,5 @@
 package dev.tocraft.modmaster
 
-import gradle.kotlin.dsl.accessors._58b8aed1b243e11ec84f3ca9a5f259a9.compileOnly
-
 projectDir.mkdirs()
 
 plugins {

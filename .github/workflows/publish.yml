@@ -23,7 +23,7 @@ jobs:
           java-version: 25
           distribution: "temurin"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v6.2.0
       - name: Upload to Maven
         run: ./gradlew check publish
         env:

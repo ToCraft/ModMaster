@@ -125,7 +125,9 @@ if (modrinthId != null) {
         (parent!!.properties["supported_versions"] as List<*>).forEach { gameVersions.add((it as String).trim()) }
     }
 }
-
+val environment = rootProject.findProperty("environment") as? String
+val isServer = environment == "server"
+val isClient = environment == "client"
 val cfId = parent!!.properties["curseforge_id"]
 if (cfId != null) {
     tasks.register<TaskPublishCurseForge>("curseforge") {
@@ -137,6 +139,13 @@ if (cfId != null) {
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
+        if ((isServer && !isClient) || (environment == null)) {
+            mainFile.addEnvironment("server")
+            mainFile.addEnvironment("client")
+        }
+        if ((!isServer && isClient) || (environment == null)) {
+            mainFile.addEnvironment("client")
+        }
         mainFile.addModLoader("fabric")
         mainFile.addModLoader("quilt")
         mainFile.addJavaVersion("Java ${(parent!!.ext.get("props") as Properties)["java"]}")

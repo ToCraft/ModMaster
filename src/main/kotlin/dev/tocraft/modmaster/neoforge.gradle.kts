@@ -122,6 +122,9 @@ if (modrinthId != null) {
     }
 }
 
+val environment = rootProject.findProperty("environment") as? String
+val isServer = environment == "server"
+val isClient = environment == "client"
 val cfId = parent!!.properties["curseforge_id"]
 if (cfId != null) {
     tasks.register<TaskPublishCurseForge>("curseforge") {
@@ -133,6 +136,13 @@ if (cfId != null) {
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
+        if ((isServer && !isClient) || (environment == null)) {
+            mainFile.addEnvironment("server")
+            mainFile.addEnvironment("client")
+        }
+        if ((!isServer && isClient) || (environment == null)) {
+            mainFile.addEnvironment("client")
+        }
         mainFile.addModLoader("neoforge")
         mainFile.addJavaVersion("Java ${(parent!!.ext.get("props") as Properties)["java"]}")
         if (project.hasProperty("required_dependencies") && (project.properties["required_dependencies"] as String).isNotBlank()) {

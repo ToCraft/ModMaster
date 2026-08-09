@@ -88,6 +88,9 @@ if (modrinthId != null) {
     }
 }
 
+val environment = rootProject.findProperty("environment") as? String
+val isServer = environment == "server" || environment == "both" || environment == null
+val isClient = environment == "client" || environment == "both" || environment == null
 val cfId = parent!!.properties["curseforge_id"]
 if (cfId != null) {
     tasks.register<TaskPublishCurseForge>("curseforge") {
@@ -99,6 +102,12 @@ if (cfId != null) {
         mainFile.releaseType = "${parent!!.properties["artifact_type"]}"
         mainFile.changelog = rootProject.ext.get("releaseChangelog")
         mainFile.changelogType = "markdown"
+        if (isServer) {
+            mainFile.addEnvironment("server")
+        }
+        if (isClient) {
+            mainFile.addEnvironment("client")
+        }
         mainFile.addModLoader("fabric")
         mainFile.addModLoader("quilt")
         mainFile.addJavaVersion("Java ${parent!!.properties["java"]}")
@@ -138,4 +147,3 @@ extensions.configure<PublishingExtension> {
         }
     }
 }
-

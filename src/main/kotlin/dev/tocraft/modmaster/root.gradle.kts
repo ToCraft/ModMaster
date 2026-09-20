@@ -108,10 +108,10 @@ tasks.register("discordRelease") {
             message.addEmbed(embed)
 
             webhook.sendMessage(message)
+            println("Send Changelog to Discord.")
         } catch (_: IOException) {
             println("Failed to push to the Discord webhook.")
         }
-        println("Send Changelog to Discord.")
     }
 }
 

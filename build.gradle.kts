@@ -42,7 +42,7 @@ dependencies {
 
     // publishing
     api("net.darkhax.curseforgegradle:net.darkhax.curseforgegradle.gradle.plugin:1.3.33")
-    api("com.modrinth.minotaur:Minotaur:2.9.0")
+    api("com.modrinth.minotaur:Minotaur:2.10.0")
     api("com.diluv.schoomp:Schoomp:1.2.7")
 
     // mod loader
